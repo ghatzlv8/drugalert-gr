@@ -19,7 +19,7 @@ export default function SettingsPage() {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
-      router.push('/simple-login');
+      router.push('/login');
       return;
     }
     
@@ -31,7 +31,7 @@ export default function SettingsPage() {
       setLoading(true);
       const token = localStorage.getItem('token');
       
-      const response = await fetch('http://localhost:8000/auth/me', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/auth/me`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -63,7 +63,7 @@ export default function SettingsPage() {
       const token = localStorage.getItem('token');
       
       // Update preferences via the correct endpoint
-      const response = await fetch('http://localhost:8000/auth/notification-preferences', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/auth/notification-preferences`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -78,7 +78,7 @@ export default function SettingsPage() {
       
       // Update phone number separately if SMS is enabled
       if (preferences.sms_notifications && preferences.phone_number) {
-        const phoneResponse = await fetch('http://localhost:8000/auth/me', {
+        const phoneResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/auth/me`, {
           method: 'PUT',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -109,7 +109,7 @@ export default function SettingsPage() {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    router.push('/simple-login');
+    router.push('/login');
   };
 
   if (loading) {

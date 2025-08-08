@@ -44,12 +44,11 @@ export default function SimpleDashboard() {
       
       const token = localStorage.getItem('token');
       if (!token) {
-        setError('No token found. Please login first.');
-        setLoading(false);
+        router.push('/login');
         return;
       }
 
-      const response = await fetch('http://localhost:8000/user/dashboard', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/user/dashboard`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -73,7 +72,7 @@ export default function SimpleDashboard() {
   const fetchCategories = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:8000/categories?include_counts=true', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/categories?include_counts=true`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -127,7 +126,7 @@ export default function SimpleDashboard() {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    window.location.href = '/simple-login';
+    window.location.href = '/login';
   };
 
   return (

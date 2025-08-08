@@ -14,7 +14,7 @@ export default function SubscriptionPage() {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
-      router.push('/simple-login');
+      router.push('/login');
       return;
     }
     
@@ -27,7 +27,7 @@ export default function SubscriptionPage() {
       const token = localStorage.getItem('token');
       
       // Fetch user data
-      const userResponse = await fetch('http://localhost:8000/auth/me', {
+      const userResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/auth/me`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -41,7 +41,7 @@ export default function SubscriptionPage() {
       setUser(userData);
       
       // Fetch subscription details
-      const subResponse = await fetch('http://localhost:8000/user/subscription', {
+      const subResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/user/subscription`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -63,7 +63,7 @@ export default function SubscriptionPage() {
       setProcessingPayment(true);
       const token = localStorage.getItem('token');
       
-      const response = await fetch('http://localhost:8000/auth/subscription/checkout', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/auth/subscription/checkout`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -94,7 +94,7 @@ export default function SubscriptionPage() {
       setProcessingPayment(true);
       const token = localStorage.getItem('token');
       
-      const response = await fetch('http://localhost:8000/auth/sms-credits/checkout', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/auth/sms-credits/checkout`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -125,7 +125,7 @@ export default function SubscriptionPage() {
       setProcessingCancel(true);
       const token = localStorage.getItem('token');
       
-      const response = await fetch('http://localhost:8000/auth/subscription/cancel', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/auth/subscription/cancel`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -151,7 +151,7 @@ export default function SubscriptionPage() {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    router.push('/simple-login');
+    router.push('/login');
   };
 
   if (loading) {
