@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
+import { useAuthStore } from '@/lib/store/auth'
 
 export default function Signup() {
   const router = useRouter()
+  const { signup } = useAuthStore()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -38,31 +40,10 @@ export default function Signup() {
     setIsLoading(true)
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/auth/signup`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          email, 
-          password,
-          full_name: fullName,
-          phone: phone || undefined
-        }),
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.detail || 'Signup failed')
-      }
-
-      // Store token and user info
-      localStorage.setItem('token', data.access_token)
-      localStorage.setItem('user', JSON.stringify(data.user))
-
+      await signup(email, password, fullName, phone)
+      
       // Redirect to dashboard
-      router.push('/simple-dashboard')
+      router.push('/dashboard')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
@@ -78,7 +59,7 @@ export default function Signup() {
             Δημιουργία λογαριασμού
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Ξεκινήστε τη δωρεάν 10-ήμερη δοκιμαστική περίοδο
+            Ξεκινήστε τη δωρεάν 4-ήμερη δοκιμαστική περίοδο
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -259,7 +240,7 @@ export default function Signup() {
                 <svg className="h-5 w-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                10 ημέρες δωρεάν δοκιμή όλων των λειτουργιών
+                4 ημέρες δωρεάν δοκιμή όλων των λειτουργιών
               </div>
               <div className="flex items-center text-sm">
                 <svg className="h-5 w-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -91,7 +91,7 @@ export const useAuthStore = create<AuthState>()(
           // Set default auth header
           axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`
           
-          toast.success('Account created! You have 10 days of free access.')
+          toast.success('Account created! You have 4 days of free access.')
         } catch (error: any) {
           set({ isLoading: false })
           toast.error(error.response?.data?.detail || 'Signup failed')

@@ -7,7 +7,7 @@ export default function IndexSimple() {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      router.push('/simple-dashboard');
+      router.push('/dashboard');
     } else {
       router.push('/simple-login');
     }
