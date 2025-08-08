@@ -1,0 +1,42 @@
+# Quick Fix Commands for DrugAlert Server
+# Copy and paste these commands after SSH login
+
+# 1. First, disable firewall temporarily to ensure access
+ufw disable
+
+# 2. Check and restart the backend service
+systemctl status drugalert-backend
+systemctl restart drugalert-backend
+
+# 3. Check and restart nginx
+systemctl status nginx
+systemctl restart nginx
+
+# 4. Check if the backend is listening on port 8443
+ss -tlnp | grep 8443
+
+# 5. View backend logs to see what's wrong
+journalctl -u drugalert-backend -n 100 --no-pager
+
+# 6. Re-enable firewall with correct rules
+ufw allow 22/tcp
+ufw allow 80/tcp
+ufw allow 443/tcp
+ufw allow 8443/tcp
+ufw --force enable
+
+# 7. Ensure services start on boot
+systemctl enable drugalert-backend
+systemctl enable nginx
+systemctl enable pm2-root
+
+# 8. Check if PM2 frontend is running
+pm2 status
+
+# 9. If frontend is not running, restart it
+cd /root/eof-scraper/frontend
+pm2 restart drugalert-frontend || pm2 start npm --name "drugalert-frontend" -- start
+
+# 10. Save PM2 configuration
+pm2 save
+pm2 startup

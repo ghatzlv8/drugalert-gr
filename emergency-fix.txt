@@ -1,0 +1,37 @@
+# EMERGENCY FIX - Run these in Hetzner Web Console
+
+# 1. Disable firewall completely
+ufw disable
+
+# 2. Restart SSH service
+systemctl restart ssh
+systemctl restart sshd
+
+# 3. Check what's wrong with backend
+cd /root/eof-scraper/backend
+systemctl status drugalert-backend
+
+# 4. Try to start backend manually first
+source venv/bin/activate
+python -m uvicorn api:app --host 0.0.0.0 --port 8443
+
+# If that works, press Ctrl+C and fix the service:
+systemctl restart drugalert-backend
+
+# 5. Restart nginx
+systemctl restart nginx
+
+# 6. Check if everything is running
+systemctl status drugalert-backend
+systemctl status nginx
+pm2 status
+
+# 7. Fix firewall rules
+ufw allow 22/tcp
+ufw allow 80/tcp
+ufw allow 443/tcp
+ufw allow 8443/tcp
+ufw --force enable
+
+# 8. Test if API works
+curl http://localhost:8443/api/health
