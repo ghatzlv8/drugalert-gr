@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { pushNotificationService } from '../services/pushNotifications';
+import Logo from '../components/Logo';
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -107,7 +108,7 @@ export default function SettingsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center space-x-8">
-              <h1 className="text-xl font-bold text-gray-900">DrugAlert.gr</h1>
+              <Logo showText={true} />
               <div className="hidden md:flex space-x-4">
                 <Link href="/dashboard" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
                   Αρχική
@@ -212,6 +213,7 @@ export default function SettingsPage() {
                   Δοκιμή Ειδοποίησης
                 </button>
               )}
+            </div>
           </div>
 
           {/* Save Button */}
