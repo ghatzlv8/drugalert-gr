@@ -41,7 +41,7 @@ export default function TestAuth() {
       }
     } catch (err) {
       addLog(`Signup error: ${err}`);
-      setError(err.toString());
+      setError(err instanceof Error ? err.message : 'Signup failed');
     }
   };
 
@@ -72,7 +72,7 @@ export default function TestAuth() {
       }
     } catch (err) {
       addLog(`Login error: ${err}`);
-      setError(err.toString());
+      setError(err instanceof Error ? err.message : 'Login failed');
     }
   };
 
@@ -103,7 +103,7 @@ export default function TestAuth() {
       }
     } catch (err) {
       addLog(`Dashboard error: ${err}`);
-      setError(err.toString());
+      setError(err instanceof Error ? err.message : 'Dashboard failed');
     }
   };
 
