@@ -349,6 +349,40 @@ def create_auth_app(app: FastAPI):
         finally:
             session.close()
     
+    @app.get("/auth/subscription-status")
+    async def get_subscription_status(current_user: User = Depends(get_current_user)):
+        """Get current user's subscription status"""
+        now = datetime.utcnow()
+        
+        # Check if user is in trial period
+        in_trial = (
+            current_user.subscription_status == SubscriptionStatus.TRIAL and
+            current_user.trial_end_date > now
+        )
+        
+        # Check if user has active subscription
+        is_premium = (
+            current_user.subscription_status == SubscriptionStatus.ACTIVE or
+            in_trial
+        )
+        
+        # Calculate days remaining
+        days_remaining = 0
+        if in_trial:
+            days_remaining = (current_user.trial_end_date - now).days
+        elif current_user.subscription_status == SubscriptionStatus.ACTIVE and current_user.subscription_end_date:
+            days_remaining = (current_user.subscription_end_date - now).days
+        
+        return {
+            "is_premium": is_premium,
+            "in_trial": in_trial,
+            "subscription_status": current_user.subscription_status.value if hasattr(current_user.subscription_status, 'value') else current_user.subscription_status,
+            "days_remaining": max(0, days_remaining),
+            "trial_end_date": current_user.trial_end_date.isoformat() if current_user.trial_end_date else None,
+            "subscription_end_date": current_user.subscription_end_date.isoformat() if current_user.subscription_end_date else None,
+            "can_use_push_notifications": is_premium
+        }
+    
     @app.put("/auth/me")
     async def update_user_profile(
         update_data: dict,

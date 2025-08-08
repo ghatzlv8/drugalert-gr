@@ -3,41 +3,25 @@ import { CheckIcon } from '@heroicons/react/20/solid';
 
 const plans = [
   {
-    name: 'Δοκιμαστική Περίοδος',
-    id: 'trial',
-    href: '/signup',
-    price: '4 ημέρες δωρεάν',
-    description: 'Δοκιμάστε όλες τις δυνατότητες χωρίς χρέωση',
-    features: [
-      'Πλήρης πρόσβαση σε όλες τις λειτουργίες',
-      'Απεριόριστες ειδοποιήσεις email',
-      'Άμεσες ειδοποιήσεις για νέες ανακοινώσεις',
-      'Πρόσβαση σε όλο το ιστορικό ανακοινώσεων',
-      'Προσωπικές ρυθμίσεις ειδοποιήσεων',
-      'Αναζήτηση και φιλτράρισμα',
-      'Χωρίς πιστωτική κάρτα'
-    ],
-    cta: 'Ξεκινήστε Δωρεάν',
-    featured: false
-  },
-  {
-    name: 'Ετήσια Συνδρομή',
-    id: 'annual',
+    name: 'Premium Συνδρομή',
+    id: 'premium',
     href: '/signup',
     price: '€14.99',
     priceNote: 'ανά έτος',
-    description: 'Πλήρης πρόσβαση για επαγγελματίες και ιδιώτες',
+    trialText: 'Δοκιμάστε δωρεάν για 4 ημέρες',
+    description: 'Πλήρης πρόσβαση σε όλες τις λειτουργίες',
     features: [
-      'Όλες οι δυνατότητες της δοκιμαστικής περιόδου',
       'Απεριόριστες ειδοποιήσεις email',
-      'Προτεραιότητα στις ειδοποιήσεις',
-      'Εξαγωγή ανακοινώσεων (PDF/CSV)',
+      'Push notifications σε κινητό και browser',
+      'Άμεσες ειδοποιήσεις για νέες ανακοινώσεις',
+      'Πρόσβαση σε όλο το ιστορικό ανακοινώσεων',
       'Προηγμένα φίλτρα αναζήτησης',
+      'Προσωπικές ρυθμίσεις ειδοποιήσεων',
+      'Προσαρμοσμένες κατηγορίες ειδοποιήσεων',
       'Email υποστήριξης',
-      'Ιστορικό όλων των ανακοινώσεων',
-      'Προσαρμοσμένες κατηγορίες ειδοποιήσεων'
+      'Χωρίς διαφημίσεις'
     ],
-    cta: 'Εγγραφή Τώρα',
+    cta: 'Ξεκινήστε Δωρεάν Δοκιμή',
     featured: true
   }
 ];
@@ -55,7 +39,7 @@ export default function PricingSection() {
           </p>
         </div>
 
-        <div className="mt-12 space-y-4 sm:mt-16 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-6 lg:max-w-2xl lg:mx-auto">
+        <div className="mt-12 max-w-lg mx-auto">
           {plans.map((plan) => (
             <div
               key={plan.id}
@@ -81,6 +65,9 @@ export default function PricingSection() {
                     <span className="text-base font-medium text-gray-500"> {plan.priceNote}</span>
                   )}
                 </p>
+                {plan.trialText && (
+                  <p className="mt-2 text-sm font-semibold text-blue-600">{plan.trialText}</p>
+                )}
                 <ul className="mt-8 space-y-4">
                   {plan.features.map((feature) => (
                     <li key={feature} className="flex">

@@ -5,6 +5,7 @@ import { Toaster } from 'react-hot-toast'
 import { useEffect } from 'react'
 import { useAuthStore } from '@/lib/store/auth'
 import { pushNotificationService } from '@/services/pushNotifications'
+import PushNotificationPrompt from '@/components/PushNotificationPrompt'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -37,6 +38,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <Component {...pageProps} />
+      <PushNotificationPrompt />
       <Toaster
         position="top-right"
         toastOptions={{
