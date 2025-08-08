@@ -160,7 +160,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h3 className="text-3xl font-bold mb-4">Ξεκινήστε Σήμερα</h3>
           <p className="text-xl text-gray-600 mb-8">
-            Δημιουργήστε δωρεάν λογαριασμό και λάβετε 10 ημέρες δοκιμαστικής περιόδου
+            Δοκιμάστε δωρεάν για 4 ημέρες - χωρίς πιστωτική κάρτα!
           </p>
           <Link href="/signup" className="bg-blue-600 text-white px-8 py-4 rounded-md text-lg font-semibold hover:bg-blue-700">
             Δημιουργία Λογαριασμού

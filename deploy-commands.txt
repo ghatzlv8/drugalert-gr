@@ -1,0 +1,7 @@
+cd /root/drugalert-app
+git pull
+npm run build --prefix frontend
+pm2 restart drugalert-frontend
+systemctl restart drugalert-api
+pm2 status
+systemctl status drugalert-api

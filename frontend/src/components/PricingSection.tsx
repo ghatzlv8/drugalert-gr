@@ -3,60 +3,42 @@ import { CheckIcon } from '@heroicons/react/20/solid';
 
 const plans = [
   {
-    name: 'Δωρεάν',
-    id: 'free',
+    name: 'Δοκιμαστική Περίοδος',
+    id: 'trial',
     href: '/signup',
-    price: { monthly: '€0', annually: '€0' },
-    description: 'Ιδανικό για προσωπική χρήση και δοκιμή της υπηρεσίας',
+    price: '4 ημέρες δωρεάν',
+    description: 'Δοκιμάστε όλες τις δυνατότητες χωρίς χρέωση',
     features: [
-      'Έως 5 ειδοποιήσεις email την ημέρα',
-      'Πρόσβαση σε όλες τις ανακοινώσεις',
-      'Βασική αναζήτηση',
-      'Ιστορικό 30 ημερών',
-      'Web interface'
+      'Πλήρης πρόσβαση σε όλες τις λειτουργίες',
+      'Απεριόριστες ειδοποιήσεις email',
+      'Άμεσες ειδοποιήσεις για νέες ανακοινώσεις',
+      'Πρόσβαση σε όλο το ιστορικό ανακοινώσεων',
+      'Προσωπικές ρυθμίσεις ειδοποιήσεων',
+      'Αναζήτηση και φιλτράρισμα',
+      'Χωρίς πιστωτική κάρτα'
     ],
     cta: 'Ξεκινήστε Δωρεάν',
     featured: false
   },
   {
-    name: 'Επαγγελματικό',
-    id: 'professional',
+    name: 'Ετήσια Συνδρομή',
+    id: 'annual',
     href: '/signup',
-    price: { monthly: '€19', annually: '€190' },
-    description: 'Για επαγγελματίες υγείας και μικρές επιχειρήσεις',
+    price: '€14.99',
+    priceNote: 'ανά έτος',
+    description: 'Πλήρης πρόσβαση για επαγγελματίες και ιδιώτες',
     features: [
+      'Όλες οι δυνατότητες της δοκιμαστικής περιόδου',
       'Απεριόριστες ειδοποιήσεις email',
-      'SMS ειδοποιήσεις (50/μήνα)',
-      'Προηγμένη αναζήτηση και φίλτρα',
-      'API πρόσβαση',
-      'Πλήρες ιστορικό',
-      'Προτεραιότητα υποστήριξης',
-      'Εξαγωγή δεδομένων (CSV/PDF)',
-      'Προσαρμοσμένες κατηγορίες'
+      'Προτεραιότητα στις ειδοποιήσεις',
+      'Εξαγωγή ανακοινώσεων (PDF/CSV)',
+      'Προηγμένα φίλτρα αναζήτησης',
+      'Email υποστήριξης',
+      'Ιστορικό όλων των ανακοινώσεων',
+      'Προσαρμοσμένες κατηγορίες ειδοποιήσεων'
     ],
-    cta: 'Δοκιμή 10 Ημερών',
+    cta: 'Εγγραφή Τώρα',
     featured: true
-  },
-  {
-    name: 'Επιχειρηματικό',
-    id: 'enterprise',
-    href: '/contact',
-    price: { monthly: '€49', annually: '€490' },
-    description: 'Για φαρμακευτικές εταιρείες και μεγάλους οργανισμούς',
-    features: [
-      'Όλα από το Επαγγελματικό',
-      'Απεριόριστες SMS ειδοποιήσεις',
-      'Webhook integrations',
-      'Πολλαπλοί χρήστες (έως 10)',
-      'Branded email templates',
-      'Dedicated account manager',
-      'SLA 99.9% uptime',
-      'Custom integrations',
-      'Compliance reports',
-      'Priority API limits'
-    ],
-    cta: 'Επικοινωνήστε μαζί μας',
-    featured: false
   }
 ];
 
@@ -66,14 +48,14 @@ export default function PricingSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl">
-            Τιμοκατάλογος
+            Απλή και Διαφανής Τιμολόγηση
           </h2>
           <p className="mt-4 text-xl text-gray-600">
-            Επιλέξτε το πακέτο που ταιριάζει στις ανάγκες σας
+            Δοκιμάστε δωρεάν για 4 ημέρες, μετά μόνο €14.99 το χρόνο
           </p>
         </div>
 
-        <div className="mt-12 space-y-4 sm:mt-16 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-6 lg:max-w-4xl lg:mx-auto xl:max-w-none xl:mx-0 xl:grid-cols-3">
+        <div className="mt-12 space-y-4 sm:mt-16 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-6 lg:max-w-2xl lg:mx-auto">
           {plans.map((plan) => (
             <div
               key={plan.id}
@@ -93,15 +75,12 @@ export default function PricingSection() {
                 <p className="mt-4 text-gray-600">{plan.description}</p>
                 <p className="mt-8">
                   <span className="text-4xl font-bold text-gray-900">
-                    {plan.price.monthly}
+                    {plan.price}
                   </span>
-                  <span className="text-base font-medium text-gray-500">/μήνα</span>
+                  {plan.priceNote && (
+                    <span className="text-base font-medium text-gray-500"> {plan.priceNote}</span>
+                  )}
                 </p>
-                {plan.price.annually !== plan.price.monthly && (
-                  <p className="text-sm text-gray-500">
-                    ή {plan.price.annually}/έτος (2 μήνες δώρο)
-                  </p>
-                )}
                 <ul className="mt-8 space-y-4">
                   {plan.features.map((feature) => (
                     <li key={feature} className="flex">
@@ -127,18 +106,27 @@ export default function PricingSection() {
           ))}
         </div>
 
+        <div className="mt-16 text-center">
+          <div className="bg-blue-50 rounded-lg p-8 max-w-2xl mx-auto">
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">
+              Γιατί μόνο €14.99 το χρόνο;
+            </h3>
+            <p className="text-gray-600 text-lg">
+              Πιστεύουμε ότι η πρόσβαση σε κρίσιμες πληροφορίες υγείας πρέπει να είναι προσιτή σε όλους. 
+              Με λιγότερο από €1.25 το μήνα, μένετε ενημερωμένοι για όλες τις ανακοινώσεις του ΕΟΦ 
+              που αφορούν την υγεία σας και της οικογένειάς σας.
+            </p>
+          </div>
+        </div>
+
         <div className="mt-12 text-center">
           <h3 className="text-xl font-semibold text-gray-900">
-            Ερωτήσεις σχετικά με τις τιμές;
+            Έχετε ερωτήσεις;
           </h3>
           <p className="mt-2 text-gray-600">
             Επικοινωνήστε μαζί μας στο{' '}
             <a href="mailto:info@drugalert.gr" className="text-blue-600 hover:underline">
               info@drugalert.gr
-            </a>{' '}
-            ή καλέστε μας στο{' '}
-            <a href="tel:+302101234567" className="text-blue-600 hover:underline">
-              210 123 4567
             </a>
           </p>
         </div>
