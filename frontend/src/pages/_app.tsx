@@ -6,7 +6,7 @@ import { useEffect } from 'react'
 import { useAuthStore } from '@/lib/store/auth'
 import { pushNotificationService } from '@/services/pushNotifications'
 import PushNotificationPrompt from '@/components/PushNotificationPrompt'
-import FAQChatbot from '@/components/FAQChatbot'
+import EnhancedChatbot from '@/components/EnhancedChatbot'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -40,7 +40,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <QueryClientProvider client={queryClient}>
       <Component {...pageProps} />
       <PushNotificationPrompt />
-      <FAQChatbot />
+      <EnhancedChatbot />
       <Toaster
         position="top-right"
         toastOptions={{

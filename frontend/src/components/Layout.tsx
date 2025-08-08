@@ -1,9 +1,10 @@
 import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { Bars3Icon, BellIcon, XMarkIcon, HomeIcon, ChartBarIcon, BellAlertIcon, CreditCardIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useAuthStore } from '@/lib/store/auth'
+import Logo from './Logo'
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
@@ -18,10 +19,10 @@ export default function Layout({ children }: LayoutProps) {
   const { user, isAuthenticated, logout } = useAuthStore()
 
   const navigation = [
-    { name: 'Αρχική', href: '/', current: router.pathname === '/' },
-    { name: 'Πίνακας Ελέγχου', href: '/dashboard', current: router.pathname === '/dashboard', auth: true },
-    { name: 'Ειδοποιήσεις', href: '/alerts', current: router.pathname === '/alerts', auth: true },
-    { name: 'Τιμολόγηση', href: '/pricing', current: router.pathname === '/pricing' },
+    { name: 'Αρχική', href: '/', current: router.pathname === '/', icon: HomeIcon },
+    { name: 'Πίνακας Ελέγχου', href: '/dashboard', current: router.pathname === '/dashboard', auth: true, icon: ChartBarIcon },
+    { name: 'Ειδοποιήσεις', href: '/alerts', current: router.pathname === '/alerts', auth: true, icon: BellAlertIcon },
+    { name: 'Τιμολόγηση', href: '/pricing', current: router.pathname === '/pricing', icon: CreditCardIcon },
   ]
 
   const userNavigation = [
@@ -37,36 +38,39 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <div className="min-h-full">
-      <Disclosure as="nav" className="bg-white shadow-sm">
+      <Disclosure as="nav" className="bg-white shadow-lg">
         {({ open }) => (
           <>
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
               <div className="flex h-16 justify-between">
                 <div className="flex">
                   <div className="flex flex-shrink-0 items-center">
-                    <Link href="/" className="flex items-center">
-                      <BellIcon className="h-8 w-8 text-primary-600" />
-                      <span className="ml-2 text-xl font-bold text-gray-900">DrugAlert.gr</span>
+                    <Link href="/" className="flex items-center group">
+                      <Logo className="h-10 w-10 transition-transform group-hover:scale-110" showText={true} />
                     </Link>
                   </div>
-                  <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
+                  <div className="hidden sm:-my-px sm:ml-10 sm:flex sm:space-x-1">
                     {navigation
                       .filter(item => !item.auth || isAuthenticated)
-                      .map((item) => (
-                        <Link
-                          key={item.name}
-                          href={item.href}
-                          className={classNames(
-                            item.current
-                              ? 'border-primary-500 text-gray-900'
-                              : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700',
-                            'inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium'
-                          )}
-                          aria-current={item.current ? 'page' : undefined}
-                        >
-                          {item.name}
-                        </Link>
-                      ))}
+                      .map((item) => {
+                        const Icon = item.icon;
+                        return (
+                          <Link
+                            key={item.name}
+                            href={item.href}
+                            className={classNames(
+                              item.current
+                                ? 'bg-primary-50 text-primary-700 border-primary-500'
+                                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 border-transparent',
+                              'inline-flex items-center gap-2 px-4 py-2 border-b-2 text-sm font-medium rounded-t-lg transition-all duration-200'
+                            )}
+                            aria-current={item.current ? 'page' : undefined}
+                          >
+                            <Icon className="h-5 w-5" />
+                            {item.name}
+                          </Link>
+                        );
+                      })}
                   </div>
                 </div>
                 <div className="hidden sm:ml-6 sm:flex sm:items-center">
@@ -163,26 +167,30 @@ export default function Layout({ children }: LayoutProps) {
               </div>
             </div>
 
-            <Disclosure.Panel className="sm:hidden">
+            <Disclosure.Panel className="sm:hidden bg-white shadow-lg">
               <div className="space-y-1 pb-3 pt-2">
                 {navigation
                   .filter(item => !item.auth || isAuthenticated)
-                  .map((item) => (
-                    <Disclosure.Button
-                      key={item.name}
-                      as={Link}
-                      href={item.href}
-                      className={classNames(
-                        item.current
-                          ? 'border-primary-500 bg-primary-50 text-primary-700'
-                          : 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800',
-                        'block border-l-4 py-2 pl-3 pr-4 text-base font-medium'
-                      )}
-                      aria-current={item.current ? 'page' : undefined}
-                    >
-                      {item.name}
-                    </Disclosure.Button>
-                  ))}
+                  .map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <Disclosure.Button
+                        key={item.name}
+                        as={Link}
+                        href={item.href}
+                        className={classNames(
+                          item.current
+                            ? 'border-primary-500 bg-primary-50 text-primary-700'
+                            : 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800',
+                          'flex items-center gap-3 border-l-4 py-3 pl-4 pr-4 text-base font-medium transition-colors duration-150'
+                        )}
+                        aria-current={item.current ? 'page' : undefined}
+                      >
+                        <Icon className="h-5 w-5" />
+                        {item.name}
+                      </Disclosure.Button>
+                    );
+                  })}
               </div>
               {isAuthenticated ? (
                 <div className="border-t border-gray-200 pb-3 pt-4">
