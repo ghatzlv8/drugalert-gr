@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 
 from database.models import DatabaseManager
 from database.user_models import User, SubscriptionStatus, Payment, SavedSearch, NotificationLog, NotificationType, PushSubscription, UserReadPost
+from database.models import Post, Category
 from config.config import DATABASE_URL
 
 # Configuration
@@ -445,6 +446,98 @@ def create_auth_app(app: FastAPI):
     ):
         session = db_manager.get_session()
         try:
+            # Check if already marked as read
+            existing = session.query(UserReadPost).filter(
+                UserReadPost.user_id == current_user.id,
+                UserReadPost.post_id == post_id
+            ).first()
+            
+            if not existing:
+                read_post = UserReadPost(
+                    user_id=current_user.id,
+                    post_id=post_id
+                )
+                session.add(read_post)
+                session.commit()
+            
+            return {"message": "Post marked as read"}
+        finally:
+            session.close()
+    
+    @app.get("/user/dashboard")
+    async def get_user_dashboard(current_user: User = Depends(get_current_user)):
+        """Get dashboard stats for the current user"""
+        session = db_manager.get_session()
+        try:
+            # Get total posts count
+            total_posts = session.query(Post).count()
+            
+            # Get read posts by user
+            read_posts_ids = session.query(UserReadPost.post_id).filter(
+                UserReadPost.user_id == current_user.id
+            ).subquery()
+            
+            # Get unread posts count
+            unread_posts = session.query(Post).filter(
+                ~Post.id.in_(read_posts_ids)
+            ).count()
+            
+            # Get categories count
+            categories_count = session.query(Category).count()
+            
+            # Get recent posts (last 10)
+            recent_posts = session.query(Post).join(Category).filter(
+                ~Post.id.in_(read_posts_ids)
+            ).order_by(Post.publish_date.desc()).limit(10).all()
+            
+            # Format recent posts
+            recent_posts_data = []
+            for post in recent_posts:
+                recent_posts_data.append({
+                    "id": post.id,
+                    "title": post.title,
+                    "content": post.content[:200] + "..." if post.content and len(post.content) > 200 else post.content,
+                    "published_date": post.publish_date.isoformat() if post.publish_date else None,
+                    "category_id": post.category_id,
+                    "is_read": False,
+                    "category": {
+                        "name": post.category.name if post.category else None,
+                        "slug": post.category.slug if post.category else None
+                    }
+                })
+            
+            # Calculate trial days remaining
+            trial_days_remaining = 0
+            if current_user.subscription_status == SubscriptionStatus.TRIAL:
+                trial_days_remaining = max(0, (current_user.trial_end_date - datetime.utcnow()).days)
+            
+            return {
+                "total_posts": total_posts,
+                "unread_posts": unread_posts,
+                "categories": categories_count,
+                "recent_posts": recent_posts_data,
+                "user": {
+                    "email": current_user.email,
+                    "subscription_status": current_user.subscription_status.value if hasattr(current_user.subscription_status, 'value') else current_user.subscription_status,
+                    "trial_days_remaining": trial_days_remaining
+                }
+            }
+        finally:
+            session.close()
+    
+    @app.post("/user/posts/{post_id}/read")
+    async def mark_post_read(
+        post_id: int,
+        current_user: User = Depends(get_current_user)
+    ):
+        """Mark a post as read by the current user"""
+        session = db_manager.get_session()
+        try:
+            # Check if post exists
+            post = session.query(Post).filter(Post.id == post_id).first()
+            if not post:
+                raise HTTPException(status_code=404, detail="Post not found")
+            
             # Check if already marked as read
             existing = session.query(UserReadPost).filter(
                 UserReadPost.user_id == current_user.id,
