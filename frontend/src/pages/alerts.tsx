@@ -72,6 +72,11 @@ export default function Alerts() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [readPosts, setReadPosts] = useState<Set<number>>(new Set());
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [sharePost, setSharePost] = useState<Post | null>(null);
+  const [shareEmail, setShareEmail] = useState('');
+  const [shareMessage, setShareMessage] = useState('');
+  const [shareLoading, setShareLoading] = useState(false);
 
   const POSTS_PER_PAGE = 20;
 
@@ -183,6 +188,45 @@ export default function Alerts() {
   const getCategorySlug = (categoryName: string): string => {
     const category = categories.find(c => c.name === categoryName);
     return category?.slug || 'default';
+  };
+
+  const handleShare = (post: Post) => {
+    setSharePost(post);
+    setShowShareModal(true);
+    setShareEmail('');
+    setShareMessage(`Δες αυτή την ανακοίνωση από τον ΕΟΦ: ${post.title}`);
+  };
+
+  const sendShareInvite = async () => {
+    if (!shareEmail || !sharePost) return;
+    
+    setShareLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/share-invite`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          email: shareEmail,
+          post_id: sharePost.id,
+          message: shareMessage
+        })
+      });
+
+      if (response.ok) {
+        alert('Η πρόσκληση στάλθηκε επιτυχώς!');
+        setShowShareModal(false);
+      } else {
+        alert('Σφάλμα κατά την αποστολή πρόσκλησης');
+      }
+    } catch (error) {
+      alert('Σφάλμα κατά την αποστολή πρόσκλησης');
+    } finally {
+      setShareLoading(false);
+    }
   };
 
   return (
@@ -316,21 +360,28 @@ export default function Alerts() {
                         <p className="text-gray-600 line-clamp-2">{post.excerpt}</p>
                       )}
                       
-                      {post.attachments.length > 0 && (
-                        <div className="mt-3 flex flex-wrap gap-2">
-                          {post.attachments.map((attachment) => (
-                            <a
-                              key={attachment.id}
-                              href={attachment.file_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center px-3 py-1 bg-gray-100 text-sm text-gray-700 rounded-md hover:bg-gray-200"
-                            >
-                              📎 {attachment.file_name || 'Συνημμένο'}
-                            </a>
-                          ))}
-                        </div>
-                      )}
+                      <div className="mt-4 flex items-center justify-between">
+                        <a
+                          href={post.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                        >
+                          Διαβάστε περισσότερα →
+                        </a>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleShare(post);
+                          }}
+                          className="inline-flex items-center px-3 py-1 bg-gray-100 text-sm text-gray-700 rounded-md hover:bg-gray-200 transition-colors"
+                        >
+                          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m9.632 4.316C18.114 15.562 18 16.018 18 16.5c0 .482.114.938.316 1.342m0-2.684a3 3 0 110 2.684M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          </svg>
+                          Κοινοποίηση
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -352,6 +403,72 @@ export default function Alerts() {
           </>
         )}
       </main>
+
+      {/* Share Modal */}
+      {showShareModal && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" onClick={() => setShowShareModal(false)}>
+          <div className="relative top-20 mx-auto p-6 border w-full max-w-md shadow-lg rounded-md bg-white" onClick={(e) => e.stopPropagation()}>
+            <div className="text-center">
+              <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
+                Κοινοποίηση Ανακοίνωσης
+              </h3>
+              
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                <p className="text-sm text-blue-800">
+                  Προσκαλέστε κάποιον να εγγραφεί στο DrugAlert.gr για να δει αυτή την ανακοίνωση και να λαμβάνει ειδοποιήσεις για μελλοντικές ανακοινώσεις του ΕΟΦ.
+                </p>
+              </div>
+
+              <div className="text-left mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Email παραλήπτη
+                </label>
+                <input
+                  type="email"
+                  value={shareEmail}
+                  onChange={(e) => setShareEmail(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="example@email.com"
+                />
+              </div>
+
+              <div className="text-left mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Προσωπικό μήνυμα (προαιρετικό)
+                </label>
+                <textarea
+                  value={shareMessage}
+                  onChange={(e) => setShareMessage(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  rows={3}
+                />
+              </div>
+
+              <div className="bg-gray-50 rounded-lg p-3 mb-4">
+                <p className="text-xs text-gray-600">
+                  <strong>Τίτλος ανακοίνωσης:</strong> {sharePost?.title}
+                </p>
+              </div>
+
+              <div className="flex justify-between">
+                <button
+                  onClick={() => setShowShareModal(false)}
+                  className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
+                >
+                  Ακύρωση
+                </button>
+                <button
+                  onClick={sendShareInvite}
+                  disabled={!shareEmail || shareLoading}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50"
+                >
+                  {shareLoading ? 'Αποστολή...' : 'Αποστολή Πρόσκλησης'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

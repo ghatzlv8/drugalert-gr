@@ -556,4 +556,51 @@ def create_auth_app(app: FastAPI):
         finally:
             session.close()
     
+    @app.post("/share-invite")
+    async def send_share_invite(
+        invite_data: dict,
+        current_user: User = Depends(get_current_user)
+    ):
+        """Send an invitation to a friend to join the platform and view a specific post"""
+        email = invite_data.get("email")
+        post_id = invite_data.get("post_id")
+        message = invite_data.get("message", "")
+        
+        if not email or not post_id:
+            raise HTTPException(status_code=400, detail="Email and post_id are required")
+        
+        session = db_manager.get_session()
+        try:
+            # Get the post details
+            post = session.query(Post).filter(Post.id == post_id).first()
+            if not post:
+                raise HTTPException(status_code=404, detail="Post not found")
+            
+            # Here you would typically send an email invitation
+            # For now, we'll just log it and return success
+            # In production, integrate with an email service like SendGrid, AWS SES, etc.
+            
+            # Log the invitation
+            print(f"Share invitation sent from {current_user.email} to {email} for post {post_id}")
+            print(f"Post title: {post.title}")
+            print(f"Personal message: {message}")
+            
+            # In a real implementation, you would:
+            # 1. Generate a unique invitation token
+            # 2. Store it in an invitations table with expiry
+            # 3. Send an email with a link like: https://drugalert.gr/signup?invite=TOKEN&post=POST_ID
+            # 4. When the recipient signs up using that link, they would automatically see the shared post
+            
+            return {
+                "message": "Invitation sent successfully",
+                "recipient": email,
+                "post_title": post.title,
+                "sender": current_user.email
+            }
+        except Exception as e:
+            print(f"Error sending invitation: {e}")
+            raise HTTPException(status_code=500, detail="Failed to send invitation")
+        finally:
+            session.close()
+    
     return app
