@@ -21,14 +21,30 @@ export default function AdminDashboard() {
     }
   }, []);
 
-  const handleAdminLogin = (e: React.FormEvent) => {
+  const handleAdminLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (adminPassword === 'admin-secret-key-2025') {
-      localStorage.setItem('adminAuth', 'authenticated');
-      setIsAuthenticated(true);
-      fetchAdminData();
-    } else {
-      alert('Λάθος κωδικός διαχειριστή');
+    try {
+      // Use the admin credentials
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://drugalert.gr/api'}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: 'admin@drugalert.gr',
+          password: adminPassword
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem('adminToken', data.access_token);
+        localStorage.setItem('adminAuth', 'authenticated');
+        setIsAuthenticated(true);
+        fetchAdminData();
+      } else {
+        alert('Λάθος κωδικός διαχειριστή');
+      }
+    } catch (error) {
+      alert('Σφάλμα σύνδεσης');
     }
   };
 
