@@ -30,7 +30,8 @@ export default function SettingsPage() {
       setLoading(true);
       const token = localStorage.getItem('token');
       
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/auth/me`, {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://drugalert.gr/api';
+      const response = await fetch(`${apiUrl}/auth/me`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -60,7 +61,8 @@ export default function SettingsPage() {
       const token = localStorage.getItem('token');
       
       // Update preferences via the correct endpoint
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/auth/notification-preferences`, {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://drugalert.gr/api';
+      const response = await fetch(`${apiUrl}/auth/notification-preferences`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,

@@ -543,7 +543,9 @@ def create_auth_app(app: FastAPI):
             # Calculate trial days remaining
             trial_days_remaining = 0
             if current_user.subscription_status == SubscriptionStatus.TRIAL:
-                trial_days_remaining = max(0, (current_user.trial_end_date - datetime.utcnow()).days)
+                # Calculate remaining time and round up to show full days
+                time_remaining = current_user.trial_end_date - datetime.utcnow()
+                trial_days_remaining = max(0, int(time_remaining.total_seconds() / 86400) + (1 if time_remaining.total_seconds() % 86400 > 0 else 0))
             
             return {
                 "total_posts": total_posts,

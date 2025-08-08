@@ -31,8 +31,8 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Σύνδεση στον λογαριασμό σας
@@ -41,7 +41,11 @@ export default function Login() {
             Παρακολουθήστε τις ανακοινώσεις του ΕΟΦ
           </p>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+      </div>
+      
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+          <form className="space-y-6" onSubmit={handleSubmit}>
           {error && (
             <div className="rounded-md bg-red-50 p-4">
               <div className="text-sm text-red-800">{error}</div>
@@ -60,8 +64,10 @@ export default function Login() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm text-base"
                 placeholder="Email"
+                autoCapitalize="off"
+                autoCorrect="off"
               />
             </div>
             <div>
@@ -77,7 +83,7 @@ export default function Login() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 pr-10 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 pr-10 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm text-base"
                   placeholder="Κωδικός"
                 />
                 <button
@@ -118,7 +124,8 @@ export default function Login() {
               Επιστροφή στην αρχική
             </Link>
           </div>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   )

@@ -137,20 +137,20 @@ export default function Layout({ children }: LayoutProps) {
                       </Menu>
                     </>
                   ) : (
-                    <div className="flex items-center space-x-4">
-                      <Link
-                        href="/login"
-                        className="text-gray-500 hover:text-gray-700 px-3 py-2 text-sm font-medium"
-                      >
-                        Σύνδεση
-                      </Link>
-                      <Link
-                        href="/signup"
-                        className="rounded-md bg-primary-600 px-3 py-2 text-sm font-medium text-white hover:bg-primary-700"
-                      >
-                        Ξεκινήστε Δωρεάν Δοκιμή
-                      </Link>
-                    </div>
+                <div className="flex items-center space-x-3">
+                  <Link
+                    href="/login"
+                    className="text-gray-500 hover:text-gray-700 px-3 py-2 text-sm font-medium"
+                  >
+                    Σύνδεση
+                  </Link>
+                  <Link
+                    href="/signup"
+                    className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 shadow-sm"
+                  >
+                    Δωρεάν Δοκιμή
+                  </Link>
+                </div>
                   )}
                 </div>
                 <div className="-mr-2 flex items-center sm:hidden">
@@ -234,18 +234,26 @@ export default function Layout({ children }: LayoutProps) {
                 </div>
               ) : (
                 <div className="border-t border-gray-200 pb-3 pt-4">
-                  <div className="flex items-center px-4 space-x-3">
-                    <Link
-                      href="/login"
-                      className="flex-1 block rounded-md border border-gray-300 px-4 py-2 text-center text-base font-medium text-gray-700 hover:bg-gray-50"
-                    >
-                      Σύνδεση
-                    </Link>
+                  <div className="px-4 space-y-3">
                     <Link
                       href="/signup"
-                      className="flex-1 block rounded-md bg-primary-600 px-4 py-2 text-center text-base font-medium text-white hover:bg-primary-700"
+                      className="block w-full rounded-md bg-primary-600 px-4 py-3 text-center text-base font-medium text-white hover:bg-primary-700"
                     >
-                      Ξεκινήστε Δωρεάν Δοκιμή
+                      Ξεκινήστε Δωρεάν Δοκιμή (4 ημέρες)
+                    </Link>
+                    <div className="relative">
+                      <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-gray-300" />
+                      </div>
+                      <div className="relative flex justify-center text-sm">
+                        <span className="bg-white px-2 text-gray-500">ή</span>
+                      </div>
+                    </div>
+                    <Link
+                      href="/login"
+                      className="block w-full rounded-md border border-gray-300 px-4 py-2 text-center text-base font-medium text-gray-700 hover:bg-gray-50"
+                    >
+                      Σύνδεση
                     </Link>
                   </div>
                 </div>
