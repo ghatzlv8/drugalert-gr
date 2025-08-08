@@ -1,0 +1,50 @@
+{
+  "name": "eof-alert-frontend",
+  "version": "1.0.0",
+  "description": "EOF Drug Alert System - Frontend",
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@headlessui/react": "^2.2.7",
+    "@heroicons/react": "2.0.18",
+    "@hookform/resolvers": "3.3.2",
+    "@stripe/react-stripe-js": "2.4.0",
+    "@stripe/stripe-js": "2.2.2",
+    "@tailwindcss/forms": "^0.5.10",
+    "@tailwindcss/typography": "^0.5.16",
+    "@tanstack/react-query": "5.14.2",
+    "@types/node": "20.10.5",
+    "@types/react": "18.2.45",
+    "@types/react-dom": "18.2.18",
+    "autoprefixer": "10.4.16",
+    "axios": "1.6.2",
+    "bcryptjs": "2.4.3",
+    "clsx": "2.1.0",
+    "date-fns": "^3.0.6",
+    "framer-motion": "10.16.16",
+    "jsonwebtoken": "9.0.2",
+    "next": "14.0.4",
+    "postcss": "8.4.32",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-hook-form": "7.48.2",
+    "react-hot-toast": "2.4.1",
+    "react-intersection-observer": "9.5.3",
+    "react-query": "3.39.3",
+    "stripe": "14.10.0",
+    "tailwindcss": "3.4.0",
+    "typescript": "5.3.3",
+    "zod": "3.22.4",
+    "zustand": "^4.5.7"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "2.4.6",
+    "@types/jsonwebtoken": "9.0.5",
+    "eslint": "8.56.0",
+    "eslint-config-next": "14.0.4"
+  }
+}
