@@ -1,6 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { format } from 'date-fns';
+// Simple date formatter
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+};
 import Link from 'next/link';
 
 interface Category {
@@ -290,7 +297,7 @@ export default function Alerts() {
                           slug={getCategorySlug(post.category_name)}
                         />
                         <span className="text-sm text-gray-500">
-                          {format(new Date(post.publish_date), 'dd/MM/yyyy')}
+                          {formatDate(post.publish_date)}
                         </span>
                         {readPosts.has(post.id) && (
                           <span className="text-sm text-green-600">✓ Αναγνωσμένο</span>
