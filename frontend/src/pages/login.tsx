@@ -34,8 +34,9 @@ export default function Login() {
       localStorage.setItem('token', data.access_token)
       localStorage.setItem('user', JSON.stringify(data.user))
 
-      // Redirect to dashboard
-      router.push('/simple-dashboard')
+      // Redirect to requested page or dashboard
+      const redirect = router.query.redirect as string
+      router.push(redirect || '/simple-dashboard')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {

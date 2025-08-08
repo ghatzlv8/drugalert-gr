@@ -75,6 +75,14 @@ export default function Alerts() {
 
   const POSTS_PER_PAGE = 20;
 
+  // Check authentication on mount
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/login?redirect=/alerts');
+    }
+  }, [router]);
+
   useEffect(() => {
     const { category, search } = router.query;
     if (category) setSelectedCategory(category as string);
