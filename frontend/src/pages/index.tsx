@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import PricingSection from '../components/PricingSection';
 
 export default function Home() {
   const [recentPosts, setRecentPosts] = useState<any[]>([]);
@@ -29,6 +30,9 @@ export default function Home() {
               <h1 className="text-xl font-bold text-gray-900">DrugAlert.gr</h1>
             </div>
             <div className="flex items-center space-x-4">
+              <Link href="#pricing" className="text-gray-700 hover:text-gray-900">
+                Τιμές
+              </Link>
               <Link href="/login" className="text-gray-700 hover:text-gray-900">
                 Σύνδεση
               </Link>
@@ -147,6 +151,9 @@ export default function Home() {
           </div>
         </div>
       )}
+
+      {/* Pricing Section */}
+      <PricingSection />
 
       {/* CTA Section */}
       <div className="bg-gray-100 py-16">

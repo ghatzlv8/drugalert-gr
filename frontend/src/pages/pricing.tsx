@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import PricingSection from '../components/PricingSection';
 
 const Pricing = () => {
   return (
@@ -6,39 +7,46 @@ const Pricing = () => {
       <nav className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
-            <div className="flex items-center space-x-8">
-              <h1 className="text-xl font-bold text-gray-900">Pricing</h1>
-              <div className="hidden md:flex items-center space-x-4">
-                <Link href="/simple-dashboard" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
-                  Αρχική
-                </Link>
-                <Link href="/alerts" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
-                  Ανακοινώσεις
-                </Link>
-                <Link href="/settings" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
-                  Ρυθμίσεις
-                </Link>
-                <Link href="/subscription" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
-                  Συνδρομή
-                </Link>
-              </div>
+            <div className="flex items-center">
+              <Link href="/" className="text-xl font-bold text-gray-900">
+                DrugAlert.gr
+              </Link>
+            </div>
+            <div className="flex items-center space-x-4">
+              <Link href="/" className="text-gray-700 hover:text-gray-900">
+                Αρχική
+              </Link>
+              <Link href="/alerts" className="text-gray-700 hover:text-gray-900">
+                Ανακοινώσεις
+              </Link>
+              <Link href="/login" className="text-gray-700 hover:text-gray-900">
+                Σύνδεση
+              </Link>
+              <Link href="/signup" className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                Εγγραφή
+              </Link>
             </div>
           </div>
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Pricing Plans</h2>
-        <div className="bg-white p-6 rounded-lg shadow">
-          <p className="mb-4 text-gray-700">We offer various pricing plans to suit your needs.</p>
-          <ul className="list-disc pl-5">
-            <li className="mb-2">Free Plan: Limited access to basic features.</li>
-            <li className="mb-2">Standard Plan: Access to all standard features for a monthly fee.</li>
-            <li className="mb-2">Premium Plan: Full access, including premium features and priority support.</li>
-          </ul>
-          <p className="text-gray-700 mt-4">For more details, please <a href="#" className="text-blue-600 hover:underline">contact us</a>.</p>
+      <PricingSection />
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-white py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center">
+            <div>
+              <p>&copy; 2024 DrugAlert.gr. Όλα τα δικαιώματα κατοχυρωμένα.</p>
+            </div>
+            <div className="flex space-x-6">
+              <Link href="/privacy" className="hover:text-gray-300">Απόρρητο</Link>
+              <Link href="/terms" className="hover:text-gray-300">Όροι Χρήσης</Link>
+              <Link href="/contact" className="hover:text-gray-300">Επικοινωνία</Link>
+            </div>
+          </div>
         </div>
-      </main>
+      </footer>
     </div>
   );
 };
