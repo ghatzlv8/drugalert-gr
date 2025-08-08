@@ -47,7 +47,7 @@ self.addEventListener('notificationclick', function(event) {
         // Check if there's already a window/tab open
         for (let i = 0; i < clientList.length; i++) {
           const client = clientList[i];
-          if (client.url.includes('localhost:3000') && 'focus' in client) {
+          if ((client.url.includes('drugalert.gr') || client.url.includes('localhost:3000')) && 'focus' in client) {
             client.navigate(urlToOpen);
             return client.focus();
           }

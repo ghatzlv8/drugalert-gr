@@ -68,7 +68,7 @@ export class PushNotificationService {
 
       // Send subscription to backend
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:8000/auth/push-subscription', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/auth/push-subscription`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -103,7 +103,7 @@ export class PushNotificationService {
         
         // Notify backend
         const token = localStorage.getItem('token');
-        await fetch('http://localhost:8000/auth/push-subscription', {
+        await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/auth/push-subscription`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${token}`
