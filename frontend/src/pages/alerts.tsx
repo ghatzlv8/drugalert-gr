@@ -191,7 +191,7 @@ export default function Alerts() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center space-x-8">
-              <h1 className="text-xl font-bold text-gray-900">EOF Alerts</h1>
+              <h1 className="text-xl font-bold text-gray-900">DrugAlert.gr</h1>
               <div className="hidden md:flex space-x-4">
                 <Link href="/simple-dashboard" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
                   Αρχική

@@ -9,7 +9,7 @@ from api_auth import create_auth_app
 
 # Create a new app that combines both
 app = FastAPI(
-    title="EOF Alert API",
+    title="DrugAlert.gr API",
     description="API for EOF drug alerts with authentication",
     version="2.0.0"
 )

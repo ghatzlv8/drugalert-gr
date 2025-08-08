@@ -46,7 +46,7 @@ export default function Layout({ children }: LayoutProps) {
                   <div className="flex flex-shrink-0 items-center">
                     <Link href="/" className="flex items-center">
                       <BellIcon className="h-8 w-8 text-primary-600" />
-                      <span className="ml-2 text-xl font-bold text-gray-900">EOF Alert</span>
+                      <span className="ml-2 text-xl font-bold text-gray-900">DrugAlert.gr</span>
                     </Link>
                   </div>
                   <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
@@ -275,7 +275,7 @@ export default function Layout({ children }: LayoutProps) {
             </div>
           </nav>
           <p className="mt-10 text-center text-xs leading-5 text-gray-500">
-            © 2025 EOF Alert. Όλα τα δικαιώματα κατοχυρωμένα. Δεν σχετίζεται με τον ΕΟΦ.
+            © 2025 DrugAlert.gr. Ολα τα δικαιώματα κατοχυρωμένα. Δεν σχετίζεται με τον ΕΟΦ.
           </p>
         </div>
       </footer>

@@ -1,6 +1,6 @@
 {
-  "name": "EOF Alert - Ειδοποιήσεις ΕΟΦ",
-  "short_name": "EOF Alert",
+  "name": "DrugAlert.gr - Ειδοποιήσεις ΕΟΦ",
+  "short_name": "DrugAlert.gr",
   "description": "Μείνετε ενημερωμένοι για ανακλήσεις φαρμάκων και ενημερώσεις από τον ΕΟΦ",
   "start_url": "/",
   "display": "standalone",

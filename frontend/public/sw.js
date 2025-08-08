@@ -29,7 +29,7 @@ self.addEventListener('push', function(event) {
   };
 
   event.waitUntil(
-    self.registration.showNotification(data.title || 'EOF Alert', options)
+    self.registration.showNotification(data.title || 'DrugAlert.gr', options)
   );
 });
 
