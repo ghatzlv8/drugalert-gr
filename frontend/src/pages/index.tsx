@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import PricingSection from '../components/PricingSection';
+import Logo from '../components/Logo';
 
 export default function Home() {
   const [recentPosts, setRecentPosts] = useState<any[]>([]);
@@ -27,7 +28,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <h1 className="text-xl font-bold text-gray-900">DrugAlert.gr</h1>
+              <Logo showText={true} />
             </div>
             <div className="flex items-center space-x-4">
               <Link href="#pricing" className="text-gray-700 hover:text-gray-900">
@@ -116,7 +117,7 @@ export default function Home() {
                 </svg>
               </div>
               <h4 className="text-xl font-semibold mb-2">Πολλαπλές Ειδοποιήσεις</h4>
-              <p className="text-gray-600">Email, Push notifications και SMS για να μην χάσετε καμία κρίσιμη ενημέρωση</p>
+              <p className="text-gray-600">Email και Push notifications για να μην χάσετε καμία κρίσιμη ενημέρωση</p>
             </div>
           </div>
         </div>

@@ -49,12 +49,7 @@ export default function PricingSection() {
                   : 'border border-gray-200'
               } rounded-lg bg-white`}
             >
-              {plan.featured && (
-                <div className="bg-blue-600 text-white text-center py-2 px-4 rounded-t-lg">
-                  <span className="text-sm font-semibold">ΔΗΜΟΦΙΛΕΣΤΕΡΟ</span>
-                </div>
-              )}
-              <div className="p-6">
+              <div className="p-8">
                 <h3 className="text-2xl font-bold text-gray-900">{plan.name}</h3>
                 <p className="mt-4 text-gray-600">{plan.description}</p>
                 <p className="mt-8">

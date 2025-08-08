@@ -9,6 +9,7 @@ const formatDate = (dateString: string) => {
   return `${day}/${month}/${year}`;
 };
 import Link from 'next/link';
+import Logo from '../components/Logo';
 
 interface Category {
   id: number;
@@ -235,9 +236,9 @@ export default function Alerts() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center space-x-8">
-              <h1 className="text-xl font-bold text-gray-900">DrugAlert.gr</h1>
+              <Logo showText={true} />
               <div className="hidden md:flex space-x-4">
-                <Link href="/simple-dashboard" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                <Link href="/dashboard" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
                   Αρχική
                 </Link>
                 <Link href="/alerts" className="text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
@@ -263,7 +264,7 @@ export default function Alerts() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Ανακοινώσεις ΕΟΦ</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Ανακοινώσεις DrugAlert.gr</h2>
           
           {/* Filters */}
           <div className="bg-white rounded-lg shadow p-4 mb-6">

@@ -10,7 +10,12 @@ export default function PushNotificationPrompt() {
   const [subscriptionStatus, setSubscriptionStatus] = useState<'unknown' | 'subscribed' | 'unsubscribed'>('unknown');
 
   useEffect(() => {
-    checkSubscriptionAndPremiumStatus();
+    // Add delay to ensure auth state is fully loaded
+    const timer = setTimeout(() => {
+      checkSubscriptionAndPremiumStatus();
+    }, 1000);
+    
+    return () => clearTimeout(timer);
   }, [user, isAuthenticated]);
 
   const checkSubscriptionAndPremiumStatus = async () => {

@@ -10,9 +10,7 @@ export default function SettingsPage() {
   const [user, setUser] = useState<any>(null);
   const [preferences, setPreferences] = useState({
     email_notifications: true,
-    push_notifications: true,
-    sms_notifications: false,
-    phone_number: ''
+    push_notifications: true
   });
   const [message, setMessage] = useState('');
 
@@ -45,9 +43,7 @@ export default function SettingsPage() {
       setUser(userData);
       setPreferences({
         email_notifications: userData.email_notifications,
-        push_notifications: userData.push_notifications,
-        sms_notifications: userData.sms_notifications,
-        phone_number: userData.phone || ''
+        push_notifications: userData.push_notifications
       });
     } catch (err) {
       console.error('Error fetching user data:', err);
@@ -71,28 +67,9 @@ export default function SettingsPage() {
         },
         body: JSON.stringify({
           email_notifications: preferences.email_notifications,
-          push_notifications: preferences.push_notifications,
-          sms_notifications: preferences.sms_notifications
+          push_notifications: preferences.push_notifications
         })
       });
-      
-      // Update phone number separately if SMS is enabled
-      if (preferences.sms_notifications && preferences.phone_number) {
-        const phoneResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/auth/me`, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            phone_number: preferences.phone_number
-          })
-        });
-        
-        if (!phoneResponse.ok) {
-          throw new Error('Failed to update phone number');
-        }
-      }
       
       if (response.ok) {
         setMessage('Οι ρυθμίσεις σας αποθηκεύτηκαν επιτυχώς');
@@ -130,9 +107,9 @@ export default function SettingsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center space-x-8">
-              <h1 className="text-xl font-bold text-gray-900">EOF Alerts</h1>
+              <h1 className="text-xl font-bold text-gray-900">DrugAlert.gr</h1>
               <div className="hidden md:flex space-x-4">
-                <Link href="/simple-dashboard" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                <Link href="/dashboard" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
                   Αρχική
                 </Link>
                 <Link href="/alerts" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
@@ -235,52 +212,6 @@ export default function SettingsPage() {
                   Δοκιμή Ειδοποίησης
                 </button>
               )}
-            </div>
-
-            {/* SMS Notifications */}
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <div>
-                  <h3 className="text-lg font-medium text-gray-900">SMS Ειδοποιήσεις</h3>
-                  <p className="text-sm text-gray-500">Λάβετε SMS για σημαντικές ανακοινώσεις</p>
-                  {user?.subscription_status !== 'active' && (
-                    <p className="text-xs text-orange-600 mt-1">Διαθέσιμο μόνο για Premium συνδρομητές</p>
-                  )}
-                  {user?.sms_credits !== undefined && (
-                    <p className="text-xs text-gray-600 mt-1">
-                      Διαθέσιμα SMS credits: {user.sms_credits.toFixed(2)}€ 
-                      ({Math.floor(user.sms_credits / 0.15)} μηνύματα)
-                    </p>
-                  )}
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={preferences.sms_notifications}
-                    onChange={(e) => setPreferences({...preferences, sms_notifications: e.target.checked})}
-                    disabled={user?.subscription_status !== 'active'}
-                    className="sr-only peer"
-                  />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600 peer-disabled:opacity-50"></div>
-                </label>
-              </div>
-              
-              {/* Phone Number */}
-              {preferences.sms_notifications && (
-                <div className="ml-0">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Αριθμός Τηλεφώνου
-                  </label>
-                  <input
-                    type="tel"
-                    value={preferences.phone_number}
-                    onChange={(e) => setPreferences({...preferences, phone_number: e.target.value})}
-                    placeholder="+30 6912345678"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-              )}
-            </div>
           </div>
 
           {/* Save Button */}

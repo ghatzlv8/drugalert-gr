@@ -89,36 +89,6 @@ export default function SubscriptionPage() {
     }
   };
 
-  const handleBuySMSCredits = async (amount: number) => {
-    try {
-      setProcessingPayment(true);
-      const token = localStorage.getItem('token');
-      
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/auth/sms-credits/checkout`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          amount: amount
-        })
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        // Redirect to Stripe checkout
-        window.location.href = data.checkout_url;
-      } else {
-        throw new Error('Failed to create checkout session');
-      }
-    } catch (err) {
-      console.error('Error creating checkout:', err);
-      alert('Σφάλμα κατά τη δημιουργία της πληρωμής');
-    } finally {
-      setProcessingPayment(false);
-    }
-  };
 
   const handleCancelSubscription = async () => {
     try {
@@ -172,9 +142,9 @@ export default function SubscriptionPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center space-x-8">
-              <h1 className="text-xl font-bold text-gray-900">EOF Alerts</h1>
+              <h1 className="text-xl font-bold text-gray-900">DrugAlert.gr</h1>
               <div className="hidden md:flex space-x-4">
-                <Link href="/simple-dashboard" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                <Link href="/dashboard" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
                   Αρχική
                 </Link>
                 <Link href="/alerts" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
@@ -271,7 +241,6 @@ export default function SubscriptionPage() {
                 <ul className="space-y-1 text-sm text-blue-700">
                   <li>✓ Απεριόριστη πρόσβαση σε όλες τις ανακοινώσεις</li>
                   <li>✓ Push ειδοποιήσεις</li>
-                  <li>✓ SMS ειδοποιήσεις</li>
                   <li>✓ Προτεραιότητα υποστήριξης</li>
                 </ul>
               </div>
@@ -307,55 +276,6 @@ export default function SubscriptionPage() {
           </div>
         )}
 
-        {/* SMS Credits */}
-        {subscription?.subscription_status === 'active' && (
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">SMS Credits</h3>
-            
-            <div className="mb-6">
-              <p className="text-sm text-gray-600 mb-2">Τρέχον υπόλοιπο:</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {subscription?.sms_credits?.toFixed(2) || '0.00'}€
-                <span className="text-sm font-normal text-gray-500 ml-2">
-                  ({Math.floor((subscription?.sms_credits || 0) / 0.15)} μηνύματα)
-                </span>
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <button
-                onClick={() => handleBuySMSCredits(5)}
-                disabled={processingPayment}
-                className="border border-gray-300 rounded-lg p-4 hover:border-blue-500 transition-colors"
-              >
-                <p className="font-semibold text-gray-900">5€</p>
-                <p className="text-sm text-gray-500">33 μηνύματα</p>
-              </button>
-              
-              <button
-                onClick={() => handleBuySMSCredits(10)}
-                disabled={processingPayment}
-                className="border border-gray-300 rounded-lg p-4 hover:border-blue-500 transition-colors"
-              >
-                <p className="font-semibold text-gray-900">10€</p>
-                <p className="text-sm text-gray-500">66 μηνύματα</p>
-              </button>
-              
-              <button
-                onClick={() => handleBuySMSCredits(20)}
-                disabled={processingPayment}
-                className="border border-gray-300 rounded-lg p-4 hover:border-blue-500 transition-colors"
-              >
-                <p className="font-semibold text-gray-900">20€</p>
-                <p className="text-sm text-gray-500">133 μηνύματα</p>
-              </button>
-            </div>
-            
-            <p className="text-xs text-gray-500 mt-4">
-              * Κάθε SMS χρεώνεται 0.15€. Τα credits δεν λήγουν.
-            </p>
-          </div>
-        )}
         
         {/* Cancel Subscription Modal */}
         {showCancelModal && (
