@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 import Layout from '@/components/Layout';
-import { apiClient } from '@/lib/api-client';
+import axios from 'axios';
 import { CalendarIcon, TagIcon, DocumentArrowDownIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import Head from 'next/head';
@@ -29,10 +29,12 @@ export default function PostDetail() {
   const router = useRouter();
   const { id } = router.query;
 
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+  
   const { data: post, isLoading, error } = useQuery<Post>({
     queryKey: ['post', id],
     queryFn: async () => {
-      const response = await apiClient.get(`/posts/${id}`);
+      const response = await axios.get(`${API_URL}/posts/${id}`);
       return response.data;
     },
     enabled: !!id,

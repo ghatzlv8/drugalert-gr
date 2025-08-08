@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { ChatBubbleLeftRightIcon, XMarkIcon, PaperAirplaneIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
-import { useQuery } from '@tanstack/react-query';
-import { apiClient } from '@/lib/api-client';
+import axios from 'axios';
 import Link from 'next/link';
 
 interface Message {
@@ -82,9 +81,11 @@ export default function EnhancedChatbot() {
     scrollToBottom();
   }, [messages]);
 
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+  
   const searchPosts = async (searchTerm: string) => {
     try {
-      const response = await apiClient.get('/posts', {
+      const response = await axios.get(`${API_URL}/posts`, {
         params: {
           search: searchTerm,
           limit: 5,
