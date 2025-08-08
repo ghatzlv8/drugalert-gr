@@ -141,8 +141,8 @@ export default function SimpleDashboard() {
                 <Link href="/simple-dashboard" className="text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
                   Αρχική
                 </Link>
-                <Link href="/posts" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
-                  Όλες οι Ανακοινώσεις
+                <Link href="/alerts" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                  Ανακοινώσεις
                 </Link>
                 <Link href="/settings" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
                   Ρυθμίσεις
@@ -198,7 +198,7 @@ export default function SimpleDashboard() {
               {categories.map((category) => (
                 <Link
                   key={category.id}
-                  href={`/posts?category=${category.slug}`}
+                  href={`/alerts?category=${category.slug}`}
                   className="bg-white rounded-lg shadow p-4 hover:shadow-md transition-shadow cursor-pointer"
                 >
                   <h4 className="font-medium text-gray-900">{category.name}</h4>
@@ -206,7 +206,7 @@ export default function SimpleDashboard() {
                 </Link>
               ))}
               <Link
-                href="/posts"
+                href="/alerts"
                 className="bg-blue-50 border-2 border-blue-200 rounded-lg p-4 hover:bg-blue-100 transition-colors cursor-pointer flex items-center justify-center"
               >
                 <span className="text-blue-700 font-medium">Προβολή όλων των ανακοινώσεων →</span>

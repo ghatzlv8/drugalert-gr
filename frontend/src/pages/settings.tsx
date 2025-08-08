@@ -135,7 +135,7 @@ export default function SettingsPage() {
                 <Link href="/simple-dashboard" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
                   Αρχική
                 </Link>
-                <Link href="/posts" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                <Link href="/alerts" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
                   Ανακοινώσεις
                 </Link>
                 <Link href="/settings" className="text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
