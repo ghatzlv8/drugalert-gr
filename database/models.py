@@ -43,6 +43,7 @@ class Post(Base):
     is_active = Column(Boolean, default=True)
     scraped_at = Column(DateTime, default=datetime.utcnow)
     last_modified = Column(DateTime, default=datetime.utcnow)
+    category_type = Column(String(50), nullable=True)  # farmaka, ktiniatrika, kallintika, etc.
     
     # Relationships
     category = relationship("Category", back_populates="posts")

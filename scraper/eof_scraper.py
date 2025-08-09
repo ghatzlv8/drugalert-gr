@@ -353,6 +353,7 @@ class EOFScraper:
                 existing_post.meta_description = content_data['meta_description']
                 existing_post.tags = content_data['tags']
                 existing_post.last_modified = datetime.utcnow()
+                existing_post.category_type = category.category_type
                 
                 # Update attachments
                 for attachment in existing_post.attachments:
@@ -378,7 +379,8 @@ class EOFScraper:
                     category_id=category.id,
                     publish_date=post_data.get('publish_date'),
                     meta_description=content_data['meta_description'],
-                    tags=content_data['tags']
+                    tags=content_data['tags'],
+                    category_type=category.category_type
                 )
                 session.add(new_post)
                 session.flush()  # Get the ID
