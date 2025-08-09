@@ -894,8 +894,8 @@ def create_auth_app(app: FastAPI):
         try:
             # Get user stats
             total_users = session.query(User).count()
-            active_subscriptions = session.query(User).filter(User.subscription_status == 'active').count()
-            trial_users = session.query(User).filter(User.subscription_status == 'trial').count()
+            active_subscriptions = session.query(User).filter(User.subscription_status == SubscriptionStatus.ACTIVE).count()
+            trial_users = session.query(User).filter(User.subscription_status == SubscriptionStatus.TRIAL).count()
             
             # Monthly revenue (active subscriptions * 14.99)
             monthly_revenue = active_subscriptions * 14.99

@@ -61,6 +61,35 @@ def create_admin_user():
     print(f"Password: {password}")
     print(f"Status: Active Premium Subscription")
 
-if __name__ == "__main__":
+def create_all_users():
+    """Create admin and test users"""
     create_admin_user()
+    
+    # Also create test user
+    session = db_manager.get_session()
+    try:
+        # Check if test user already exists
+        test_user = session.query(User).filter(User.email == "geohatz1506@gmail.com").first()
+        if not test_user:
+            test_user = User(
+                email="geohatz1506@gmail.com",
+                password_hash=create_password_hash("test123"),
+                full_name="Test User",
+                subscription_status=SubscriptionStatus.TRIAL,
+                trial_end_date=datetime.utcnow() + timedelta(days=4),
+                created_at=datetime.utcnow()
+            )
+            session.add(test_user)
+            session.commit()
+            print(f"✅ Created test user: geohatz1506@gmail.com")
+        else:
+            print(f"Test user geohatz1506@gmail.com already exists")
+    except Exception as e:
+        print(f"Error creating test user: {e}")
+        session.rollback()
+    finally:
+        session.close()
+
+if __name__ == "__main__":
+    create_all_users()
     session.close()

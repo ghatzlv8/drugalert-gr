@@ -54,50 +54,58 @@ export default function AdminDashboard() {
       const token = localStorage.getItem('adminToken');
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://drugalert.gr/api';
       
-      // Fetch admin stats
-      const statsResponse = await fetch(`${apiUrl}/admin/stats`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      console.log('Fetching admin data with token:', token ? 'Token exists' : 'No token');
       
-      if (statsResponse.ok) {
-        const statsData = await statsResponse.json();
-        setStats(statsData);
-      } else {
-        // If admin endpoint doesn't exist yet, calculate basic stats
-        const usersResponse = await fetch(`${apiUrl}/admin/users`, {
+      // Fetch both stats and users in parallel
+      const [statsResponse, usersResponse] = await Promise.all([
+        fetch(`${apiUrl}/admin/stats`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
+        }),
+        fetch(`${apiUrl}/admin/users`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+      ]);
+      
+      console.log('Stats response:', statsResponse.status);
+      console.log('Users response:', usersResponse.status);
+      
+      // Process stats
+      if (statsResponse.ok) {
+        const statsData = await statsResponse.json();
+        console.log('Stats data:', statsData);
+        setStats(statsData);
+      } else {
+        const errorText = await statsResponse.text();
+        console.error('Stats error:', statsResponse.status, errorText);
+      }
+      
+      // Process users
+      if (usersResponse.ok) {
+        const usersData = await usersResponse.json();
+        console.log('Users data:', usersData);
+        setUsers(usersData);
+      } else {
+        const errorText = await usersResponse.text();
+        console.error('Users error:', usersResponse.status, errorText);
+        setUsers([]);
+      }
+      
+      // If stats failed but users succeeded, calculate stats from users
+      if (!statsResponse.ok && usersResponse.ok && users.length > 0) {
+        const totalUsers = users.length;
+        const activeSubscriptions = users.filter((u: any) => u.subscription_status === 'active' || u.subscription_status === 'SubscriptionStatus.ACTIVE').length;
+        const trialUsers = users.filter((u: any) => u.subscription_status === 'trial' || u.subscription_status === 'SubscriptionStatus.TRIAL').length;
+        setStats({
+          totalUsers,
+          activeSubscriptions,
+          trialUsers,
+          monthlyRevenue: activeSubscriptions * 14.99,
+          totalPosts: 0
         });
-        
-        if (usersResponse.ok) {
-          const usersData = await usersResponse.json();
-          setUsers(usersData);
-          
-          // Calculate stats from users data
-          const totalUsers = usersData.length;
-          const activeSubscriptions = usersData.filter((u: any) => u.subscription_status === 'active').length;
-          const trialUsers = usersData.filter((u: any) => u.subscription_status === 'trial').length;
-          setStats({
-            totalUsers,
-            activeSubscriptions,
-            trialUsers,
-            monthlyRevenue: activeSubscriptions * 14.99,
-            totalPosts: 0 // Would need posts endpoint
-          });
-        } else {
-          // Fallback: show empty data if no users
-          setStats({
-            totalUsers: 0,
-            activeSubscriptions: 0,
-            trialUsers: 0,
-            monthlyRevenue: 0,
-            totalPosts: 0
-          });
-          setUsers([]);
-        }
       }
     } catch (err) {
       console.error('Error fetching admin data:', err);
