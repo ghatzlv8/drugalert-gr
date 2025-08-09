@@ -61,6 +61,9 @@ export const useAuthStore = create<AuthState>()(
           // Set default auth header
           axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`
           
+          // Also save to localStorage for compatibility with dashboard
+          localStorage.setItem('token', access_token)
+          
           toast.success('Welcome back!')
         } catch (error: any) {
           set({ isLoading: false })
@@ -91,6 +94,9 @@ export const useAuthStore = create<AuthState>()(
           // Set default auth header
           axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`
           
+          // Also save to localStorage for compatibility with dashboard
+          localStorage.setItem('token', access_token)
+          
           toast.success('Account created! You have 4 days of free access.')
         } catch (error: any) {
           set({ isLoading: false })
@@ -107,6 +113,7 @@ export const useAuthStore = create<AuthState>()(
         })
         
         delete axios.defaults.headers.common['Authorization']
+        localStorage.removeItem('token')
         toast.success('Logged out successfully')
       },
 
