@@ -40,27 +40,44 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <>
-      {/* Google Analytics */}
+      {/* Define dataLayer and gtag function before loading Google tag */}
+      <Script id="gtag-init" strategy="beforeInteractive">
+        {`
+          // Define dataLayer and the gtag function.
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          
+          // Set default consent to 'denied' for EU regions
+          gtag('consent', 'default', {
+            'ad_storage': 'denied',
+            'ad_user_data': 'denied',
+            'ad_personalization': 'denied',
+            'analytics_storage': 'denied',
+            'wait_for_update': 500,
+            'region': ['EEA', 'EU', 'GR', 'GB']
+          });
+          
+          // For users outside of EU, set more permissive defaults
+          gtag('consent', 'default', {
+            'ad_storage': 'granted',
+            'ad_user_data': 'granted',
+            'ad_personalization': 'granted',
+            'analytics_storage': 'granted'
+          });
+        `}
+      </Script>
+      
+      {/* Google tag (gtag.js) */}
       <Script
         src="https://www.googletagmanager.com/gtag/js?id=G-HTRYE07M9X"
         strategy="afterInteractive"
       />
-      <Script id="google-analytics" strategy="afterInteractive">
+      
+      <Script id="google-analytics-config" strategy="afterInteractive">
         {`
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
-          
-          // Google Consent Mode v2 - Default settings
-          gtag('consent', 'default', {
-            'analytics_storage': 'denied',
-            'ad_storage': 'denied',
-            'ad_user_data': 'denied',
-            'ad_personalization': 'denied',
-            'wait_for_update': 500,
-            'region': ['EEA', 'EU', 'GR']
-          });
-          
           gtag('config', 'G-HTRYE07M9X');
         `}
       </Script>

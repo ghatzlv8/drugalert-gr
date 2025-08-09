@@ -18,6 +18,7 @@ interface ConsentState {
 export default function CookieConsent() {
   const [showBanner, setShowBanner] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
+  const [isEURegion, setIsEURegion] = useState(true); // Default to true for safety
   const [consent, setConsent] = useState<ConsentState>({
     analytics_storage: 'denied',
     ad_storage: 'denied',
@@ -26,27 +27,48 @@ export default function CookieConsent() {
   });
 
   useEffect(() => {
-    // Check if user has already made a choice
-    const savedConsent = localStorage.getItem('cookieConsent');
-    if (!savedConsent) {
-      // Default consent mode (denied)
-      updateGoogleConsent({
-        analytics_storage: 'denied',
-        ad_storage: 'denied',
-        ad_user_data: 'denied',
-        ad_personalization: 'denied'
-      });
-      setShowBanner(true);
-    } else {
-      const parsedConsent = JSON.parse(savedConsent);
-      setConsent(parsedConsent);
-      updateGoogleConsent(parsedConsent);
-    }
+    // Detect if user is in EU region
+    const detectRegion = async () => {
+      try {
+        // Check timezone for basic region detection
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const euTimezones = ['Europe/', 'EET', 'CET', 'WET', 'GMT', 'BST'];
+        const isInEU = euTimezones.some(tz => timezone.includes(tz));
+        setIsEURegion(isInEU);
+        
+        // Check if user has already made a choice
+        const savedConsent = localStorage.getItem('cookieConsent');
+        if (!savedConsent && isInEU) {
+          // Show banner for new EU users
+          setShowBanner(true);
+        } else if (savedConsent) {
+          // User has already made a choice, update consent state
+          const parsedConsent = JSON.parse(savedConsent);
+          setConsent(parsedConsent);
+          updateGoogleConsent(parsedConsent);
+        }
+      } catch (error) {
+        // Default to showing banner on error
+        setIsEURegion(true);
+        const savedConsent = localStorage.getItem('cookieConsent');
+        if (!savedConsent) {
+          setShowBanner(true);
+        }
+      }
+    };
+    
+    detectRegion();
   }, []);
 
   const updateGoogleConsent = (consentState: ConsentState) => {
     if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('consent', 'update', consentState);
+      // Update each consent parameter individually as per Google's advanced implementation
+      window.gtag('consent', 'update', {
+        'ad_storage': consentState.ad_storage,
+        'ad_user_data': consentState.ad_user_data,
+        'ad_personalization': consentState.ad_personalization,
+        'analytics_storage': consentState.analytics_storage
+      });
     }
   };
 
