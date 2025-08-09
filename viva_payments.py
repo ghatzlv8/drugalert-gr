@@ -31,7 +31,7 @@ class VivaPayments:
         self.accounts_url = "https://accounts.vivapayments.com" if self.is_production else "https://demo-accounts.vivapayments.com"
         
         # Subscription settings
-        self.annual_price_cents = int(os.getenv("ANNUAL_SUBSCRIPTION_PRICE", "4900"))  # 49.00 EUR default
+        self.annual_price_cents = int(os.getenv("ANNUAL_SUBSCRIPTION_PRICE", "1499"))  # 14.99 EUR
         self.currency = "EUR"
         
     def get_access_token(self) -> Optional[str]:
@@ -107,7 +107,7 @@ class VivaPayments:
             return {
                 "order_code": order["orderCode"],
                 "amount": self.annual_price_cents,
-                "checkout_url": f"{self.base_url}/web/checkout?ref={order['orderCode']}",  # Fallback URL
+                "checkout_url": f"{'https://www.vivapayments.com' if self.is_production else 'https://demo.vivapayments.com'}/web/checkout?ref={order['orderCode']}",  # Redirect URL
                 "order_data": order
             }
             
