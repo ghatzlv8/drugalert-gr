@@ -47,6 +47,14 @@ class UserResponse(BaseModel):
     push_notifications: bool
     sms_notifications: bool
     sms_credits: float
+    # Billing info
+    company_name: Optional[str]
+    tax_id: Optional[str]
+    tax_office: Optional[str]
+    billing_address: Optional[str]
+    billing_city: Optional[str]
+    billing_postal_code: Optional[str]
+    invoice_type: Optional[str]
     
     class Config:
         from_attributes = True
@@ -354,6 +362,36 @@ def create_auth_app(app: FastAPI):
             session.commit()
             
             return {"message": "Preferences updated successfully"}
+        finally:
+            session.close()
+    
+    @app.put("/auth/billing-info")
+    async def update_billing_info(
+        billing_data: dict,
+        current_user: User = Depends(get_current_user)
+    ):
+        session = db_manager.get_session()
+        try:
+            user = session.query(User).filter(User.id == current_user.id).first()
+            
+            # Update billing fields
+            if 'company_name' in billing_data:
+                user.company_name = billing_data['company_name']
+            if 'tax_id' in billing_data:
+                user.tax_id = billing_data['tax_id']
+            if 'tax_office' in billing_data:
+                user.tax_office = billing_data['tax_office']
+            if 'billing_address' in billing_data:
+                user.billing_address = billing_data['billing_address']
+            if 'billing_city' in billing_data:
+                user.billing_city = billing_data['billing_city']
+            if 'billing_postal_code' in billing_data:
+                user.billing_postal_code = billing_data['billing_postal_code']
+            if 'invoice_type' in billing_data:
+                user.invoice_type = billing_data['invoice_type']
+            
+            session.commit()
+            return {"message": "Billing info updated successfully"}
         finally:
             session.close()
     

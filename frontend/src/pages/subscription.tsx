@@ -10,6 +10,17 @@ export default function SubscriptionPage() {
   const [processingPayment, setProcessingPayment] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [processingCancel, setProcessingCancel] = useState(false);
+  const [billingInfo, setBillingInfo] = useState({
+    company_name: '',
+    tax_id: '',
+    tax_office: '',
+    billing_address: '',
+    billing_city: '',
+    billing_postal_code: '',
+    invoice_type: 'receipt'
+  });
+  const [savingBilling, setSavingBilling] = useState(false);
+  const [billingMessage, setBillingMessage] = useState('');
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -39,6 +50,17 @@ export default function SubscriptionPage() {
       
       const userData = await userResponse.json();
       setUser(userData);
+      
+      // Set billing info from user data
+      setBillingInfo({
+        company_name: userData.company_name || '',
+        tax_id: userData.tax_id || '',
+        tax_office: userData.tax_office || '',
+        billing_address: userData.billing_address || '',
+        billing_city: userData.billing_city || '',
+        billing_postal_code: userData.billing_postal_code || '',
+        invoice_type: userData.invoice_type || 'receipt'
+      });
       
       // Fetch subscription details
       const subResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/user/subscription`, {
@@ -115,6 +137,35 @@ export default function SubscriptionPage() {
       alert('Σφάλμα κατά την ακύρωση της συνδρομής');
     } finally {
       setProcessingCancel(false);
+    }
+  };
+
+  const handleSaveBilling = async () => {
+    try {
+      setSavingBilling(true);
+      setBillingMessage('');
+      const token = localStorage.getItem('token');
+      
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://drugalert.gr/api';
+      const response = await fetch(`${apiUrl}/auth/billing-info`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(billingInfo)
+      });
+      
+      if (response.ok) {
+        setBillingMessage('Τα στοιχεία τιμολόγησης αποθηκεύτηκαν επιτυχώς');
+      } else {
+        throw new Error('Failed to save billing info');
+      }
+    } catch (err) {
+      console.error('Error saving billing info:', err);
+      setBillingMessage('Σφάλμα κατά την αποθήκευση των στοιχείων');
+    } finally {
+      setSavingBilling(false);
     }
   };
 
@@ -276,6 +327,143 @@ export default function SubscriptionPage() {
           </div>
         )}
 
+        {/* Billing Information */}
+        <div className="bg-white rounded-lg shadow p-6 mb-8">
+          <h3 className="text-lg font-medium text-gray-900 mb-4">Στοιχεία Τιμολόγησης</h3>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Τύπος Παραστατικού</label>
+              <div className="mt-2 space-x-4">
+                <label className="inline-flex items-center">
+                  <input
+                    type="radio"
+                    value="receipt"
+                    checked={billingInfo.invoice_type === 'receipt'}
+                    onChange={(e) => setBillingInfo({...billingInfo, invoice_type: e.target.value})}
+                    className="form-radio h-4 w-4 text-blue-600"
+                  />
+                  <span className="ml-2">Απόδειξη</span>
+                </label>
+                <label className="inline-flex items-center">
+                  <input
+                    type="radio"
+                    value="invoice"
+                    checked={billingInfo.invoice_type === 'invoice'}
+                    onChange={(e) => setBillingInfo({...billingInfo, invoice_type: e.target.value})}
+                    className="form-radio h-4 w-4 text-blue-600"
+                  />
+                  <span className="ml-2">Τιμολόγιο</span>
+                </label>
+              </div>
+            </div>
+            
+            {billingInfo.invoice_type === 'invoice' && (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="company_name" className="block text-sm font-medium text-gray-700">
+                      Επωνυμία Εταιρείας
+                    </label>
+                    <input
+                      type="text"
+                      id="company_name"
+                      value={billingInfo.company_name}
+                      onChange={(e) => setBillingInfo({...billingInfo, company_name: e.target.value})}
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="tax_id" className="block text-sm font-medium text-gray-700">
+                      ΑΦΜ
+                    </label>
+                    <input
+                      type="text"
+                      id="tax_id"
+                      value={billingInfo.tax_id}
+                      onChange={(e) => setBillingInfo({...billingInfo, tax_id: e.target.value})}
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="tax_office" className="block text-sm font-medium text-gray-700">
+                      ΔΟΥ
+                    </label>
+                    <input
+                      type="text"
+                      id="tax_office"
+                      value={billingInfo.tax_office}
+                      onChange={(e) => setBillingInfo({...billingInfo, tax_office: e.target.value})}
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="billing_city" className="block text-sm font-medium text-gray-700">
+                      Πόλη
+                    </label>
+                    <input
+                      type="text"
+                      id="billing_city"
+                      value={billingInfo.billing_city}
+                      onChange={(e) => setBillingInfo({...billingInfo, billing_city: e.target.value})}
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="billing_address" className="block text-sm font-medium text-gray-700">
+                      Διεύθυνση
+                    </label>
+                    <input
+                      type="text"
+                      id="billing_address"
+                      value={billingInfo.billing_address}
+                      onChange={(e) => setBillingInfo({...billingInfo, billing_address: e.target.value})}
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="billing_postal_code" className="block text-sm font-medium text-gray-700">
+                      Ταχυδρομικός Κώδικας
+                    </label>
+                    <input
+                      type="text"
+                      id="billing_postal_code"
+                      value={billingInfo.billing_postal_code}
+                      onChange={(e) => setBillingInfo({...billingInfo, billing_postal_code: e.target.value})}
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+            
+            <div className="flex items-center justify-between pt-4">
+              <div>
+                {billingMessage && (
+                  <p className={`text-sm ${billingMessage.includes('επιτυχώς') ? 'text-green-600' : 'text-red-600'}`}>
+                    {billingMessage}
+                  </p>
+                )}
+              </div>
+              <button
+                onClick={handleSaveBilling}
+                disabled={savingBilling}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+              >
+                {savingBilling ? 'Αποθήκευση...' : 'Αποθήκευση Στοιχείων'}
+              </button>
+            </div>
+          </div>
+        </div>
         
         {/* Cancel Subscription Modal */}
         {showCancelModal && (

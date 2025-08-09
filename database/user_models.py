@@ -34,10 +34,19 @@ class User(Base):
     full_name = Column(String(255))
     phone = Column(String(20))  # For SMS notifications
     
+    # Billing info for Greek businesses
+    company_name = Column(String(255))
+    tax_id = Column(String(20))  # AFM
+    tax_office = Column(String(100))  # DOY
+    billing_address = Column(Text)
+    billing_city = Column(String(100))
+    billing_postal_code = Column(String(10))
+    invoice_type = Column(String(20), default='receipt')  # 'invoice' or 'receipt'
+    
     # Subscription info
     subscription_status = Column(Enum(SubscriptionStatus), default=SubscriptionStatus.TRIAL)
     trial_start_date = Column(DateTime, default=datetime.utcnow)
-    trial_end_date = Column(DateTime, default=lambda: datetime.utcnow() + timedelta(days=10))
+    trial_end_date = Column(DateTime, default=lambda: datetime.utcnow() + timedelta(days=4))
     subscription_start_date = Column(DateTime)
     subscription_end_date = Column(DateTime)
     stripe_customer_id = Column(String(255))
