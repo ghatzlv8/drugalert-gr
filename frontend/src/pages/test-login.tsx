@@ -27,7 +27,7 @@ export default function TestLogin() {
         
         // Wait a moment then redirect
         setTimeout(() => {
-          window.location.href = '/dashboard'
+          window.location.href = '/dashboard-test'
         }, 1000)
       } else {
         setResult(`Login failed: ${data.detail || 'Unknown error'}`)

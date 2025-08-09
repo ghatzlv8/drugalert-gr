@@ -16,14 +16,29 @@ export default function Dashboard() {
   const [categories, setCategories] = useState<any[]>([]);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      router.push('/login');
-      return;
-    }
+    // Only run on client side
+    if (typeof window === 'undefined') return;
     
-    fetchDashboardData();
-  }, []);
+    // Add a small delay to ensure localStorage is ready
+    const checkAuth = async () => {
+      // Wait a bit for localStorage to be ready
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      const token = localStorage.getItem('token');
+      console.log('Dashboard: Checking token:', token ? 'Found' : 'Not found');
+      
+      if (!token) {
+        console.log('Dashboard: No token, redirecting to login');
+        router.push('/login');
+        return;
+      }
+      
+      console.log('Dashboard: Token found, fetching data');
+      fetchDashboardData();
+    };
+    
+    checkAuth();
+  }, [router]);
 
   useEffect(() => {
     filterPosts();
