@@ -7,6 +7,7 @@ import { useAuthStore } from '@/lib/store/auth'
 import { pushNotificationService } from '@/services/pushNotifications'
 import PushNotificationPrompt from '@/components/PushNotificationPrompt'
 import EnhancedChatbot from '@/components/EnhancedChatbot'
+import Script from 'next/script'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -37,11 +38,26 @@ export default function App({ Component, pageProps }: AppProps) {
   }, [initAuth])
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <Component {...pageProps} />
-      <PushNotificationPrompt />
-      <EnhancedChatbot />
-      <Toaster
+    <>
+      {/* Google Analytics */}
+      <Script
+        src="https://www.googletagmanager.com/gtag/js?id=G-HTRYE07M9X"
+        strategy="afterInteractive"
+      />
+      <Script id="google-analytics" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-HTRYE07M9X');
+        `}
+      </Script>
+      
+      <QueryClientProvider client={queryClient}>
+        <Component {...pageProps} />
+        <PushNotificationPrompt />
+        <EnhancedChatbot />
+        <Toaster
         position="top-right"
         toastOptions={{
           duration: 4000,
@@ -62,7 +78,8 @@ export default function App({ Component, pageProps }: AppProps) {
             },
           },
         }}
-      />
-    </QueryClientProvider>
+        />
+      </QueryClientProvider>
+    </>
   )
 }
