@@ -106,15 +106,19 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         
-        # Check if subscription is expired
-        if user.subscription_status == SubscriptionStatus.TRIAL:
-            if datetime.utcnow() > user.trial_end_date:
-                user.subscription_status = SubscriptionStatus.EXPIRED
-                session.commit()
-        elif user.subscription_status == SubscriptionStatus.ACTIVE:
-            if user.subscription_end_date and datetime.utcnow() > user.subscription_end_date:
-                user.subscription_status = SubscriptionStatus.EXPIRED
-                session.commit()
+        # Check if subscription is expired (try but don't fail if locked)
+        try:
+            if user.subscription_status == SubscriptionStatus.TRIAL:
+                if datetime.utcnow() > user.trial_end_date:
+                    user.subscription_status = SubscriptionStatus.EXPIRED
+                    session.commit()
+            elif user.subscription_status == SubscriptionStatus.ACTIVE:
+                if user.subscription_end_date and datetime.utcnow() > user.subscription_end_date:
+                    user.subscription_status = SubscriptionStatus.EXPIRED
+                    session.commit()
+        except Exception as e:
+            print(f"Warning: Could not update subscription status: {e}")
+            session.rollback()
         
         return user
     finally:
@@ -174,9 +178,13 @@ def create_auth_app(app: FastAPI):
             if not user or not verify_password(credentials.password, user.password_hash):
                 raise HTTPException(status_code=401, detail="Invalid email or password")
             
-            # Update last login
-            user.last_login = datetime.utcnow()
-            session.commit()
+            # Update last login (try but don't fail if locked)
+            try:
+                user.last_login = datetime.utcnow()
+                session.commit()
+            except Exception as e:
+                print(f"Warning: Could not update last_login: {e}")
+                session.rollback()
             
             # Create access token
             access_token = create_access_token({"sub": str(user.id)})
