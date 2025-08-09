@@ -60,8 +60,16 @@ export default function SettingsPage() {
       setMessage('');
       const token = localStorage.getItem('token');
       
+      if (!token) {
+        setMessage('Δεν βρέθηκε token. Παρακαλώ συνδεθείτε ξανά.');
+        router.push('/login');
+        return;
+      }
+      
       // Update preferences via the correct endpoint
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://drugalert.gr/api';
+      console.log('Saving preferences to:', `${apiUrl}/auth/notification-preferences`);
+      
       const response = await fetch(`${apiUrl}/auth/notification-preferences`, {
         method: 'PUT',
         headers: {
@@ -70,16 +78,33 @@ export default function SettingsPage() {
         },
         body: JSON.stringify({
           email_notifications: preferences.email_notifications,
-          push_notifications: preferences.push_notifications
+          push_notifications: preferences.push_notifications,
+          sms_notifications: false  // Add this field as it's required by the API
         })
       });
       
+      console.log('Response status:', response.status);
+      
       if (response.ok) {
+        const data = await response.json();
+        console.log('Save successful:', data);
         setMessage('Οι ρυθμίσεις σας αποθηκεύτηκαν επιτυχώς');
+        
+        // Update user data in local state
+        if (user) {
+          setUser({
+            ...user,
+            email_notifications: preferences.email_notifications,
+            push_notifications: preferences.push_notifications
+          });
+        }
       } else {
-        throw new Error('Failed to save preferences');
+        const errorText = await response.text();
+        console.error('Save failed:', response.status, errorText);
+        throw new Error(`Failed to save preferences: ${response.status} ${errorText}`);
       }
     } catch (err) {
+      console.error('Error saving preferences:', err);
       setMessage('Σφάλμα κατά την αποθήκευση των ρυθμίσεων');
     } finally {
       setSaving(false);
