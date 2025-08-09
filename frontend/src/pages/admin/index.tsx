@@ -51,66 +51,70 @@ export default function AdminDashboard() {
   const fetchAdminData = async () => {
     try {
       setLoading(true);
+      const token = localStorage.getItem('adminToken');
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://drugalert.gr/api';
       
-      // For demo purposes, we'll use mock data
-      // In production, this would call admin API endpoints
-      
-      const mockStats = {
-        totalUsers: 5,
-        activeSubscriptions: 2,
-        trialUsers: 3,
-        monthlyRevenue: 29.98,
-        totalPosts: 184,
-        totalSmsCredits: 15.50
-      };
-      
-      const mockUsers = [
-        {
-          id: 1,
-          email: 'ghatz@live.com',
-          subscription_status: 'active',
-          created_at: '2025-08-01T10:00:00',
-          last_login: '2025-08-08T08:30:00',
-          sms_credits: 10.50
-        },
-        {
-          id: 5,
-          email: 'ghatzpremium@live.com',
-          subscription_status: 'active',
-          created_at: '2025-08-08T05:50:00',
-          last_login: '2025-08-08T06:00:00',
-          sms_credits: 0
-        },
-        {
-          id: 2,
-          email: 'test@example.com',
-          subscription_status: 'trial',
-          created_at: '2025-08-07T14:00:00',
-          last_login: '2025-08-07T14:30:00',
-          sms_credits: 0
-        },
-        {
-          id: 3,
-          email: 'working@example.com',
-          subscription_status: 'trial',
-          created_at: '2025-08-08T04:00:00',
-          last_login: '2025-08-08T05:00:00',
-          sms_credits: 0
-        },
-        {
-          id: 4,
-          email: 'newtest@example.com',
-          subscription_status: 'trial',
-          created_at: '2025-08-08T05:00:00',
-          last_login: null,
-          sms_credits: 0
+      // Fetch admin stats
+      const statsResponse = await fetch(`${apiUrl}/admin/stats`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
         }
-      ];
+      });
       
-      setStats(mockStats);
-      setUsers(mockUsers);
+      if (statsResponse.ok) {
+        const statsData = await statsResponse.json();
+        setStats(statsData);
+      } else {
+        // If admin endpoint doesn't exist yet, calculate basic stats
+        const usersResponse = await fetch(`${apiUrl}/admin/users`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (usersResponse.ok) {
+          const usersData = await usersResponse.json();
+          setUsers(usersData);
+          
+          // Calculate stats from users data
+          const totalUsers = usersData.length;
+          const activeSubscriptions = usersData.filter((u: any) => u.subscription_status === 'active').length;
+          const trialUsers = usersData.filter((u: any) => u.subscription_status === 'trial').length;
+          const totalSmsCredits = usersData.reduce((sum: number, u: any) => sum + (u.sms_credits || 0), 0);
+          
+          setStats({
+            totalUsers,
+            activeSubscriptions,
+            trialUsers,
+            monthlyRevenue: activeSubscriptions * 14.99,
+            totalPosts: 0, // Would need posts endpoint
+            totalSmsCredits
+          });
+        } else {
+          // Fallback: show empty data if no users
+          setStats({
+            totalUsers: 0,
+            activeSubscriptions: 0,
+            trialUsers: 0,
+            monthlyRevenue: 0,
+            totalPosts: 0,
+            totalSmsCredits: 0
+          });
+          setUsers([]);
+        }
+      }
     } catch (err) {
       console.error('Error fetching admin data:', err);
+      // Show empty data on error
+      setStats({
+        totalUsers: 0,
+        activeSubscriptions: 0,
+        trialUsers: 0,
+        monthlyRevenue: 0,
+        totalPosts: 0,
+        totalSmsCredits: 0
+      });
+      setUsers([]);
     } finally {
       setLoading(false);
     }
