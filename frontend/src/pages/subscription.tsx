@@ -90,15 +90,12 @@ export default function SubscriptionPage() {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          price_id: 'price_premium_yearly'
-        })
+        }
       });
       
       if (response.ok) {
         const data = await response.json();
-        // Redirect to Stripe checkout
+        // Redirect to Viva checkout
         window.location.href = data.checkout_url;
       } else {
         throw new Error('Failed to create checkout session');

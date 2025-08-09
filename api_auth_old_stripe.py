@@ -1,12 +1,11 @@
 from fastapi import FastAPI, HTTPException, Depends, Header, BackgroundTasks, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel, EmailStr
-from typing import Optional, List, Dict, Any
+from typing import Optional, List
 from datetime import datetime, timedelta
 import bcrypt
 import jwt
 import os
-import json
 from sqlalchemy.orm import Session
 
 from database.models import DatabaseManager
@@ -63,8 +62,7 @@ class UserResponse(BaseModel):
         from_attributes = True
 
 class SubscriptionCheckout(BaseModel):
-    # Empty for now, we'll create the order server-side
-    pass
+    price_id: str = "price_1234567890"  # Stripe price ID for annual subscription
 
 class SMSCreditsCheckout(BaseModel):
     amount: float  # Amount in EUR
@@ -158,7 +156,17 @@ def create_auth_app(app: FastAPI):
             session.add(new_user)
             session.commit()
             
-            # Note: We don't create Viva customer immediately - only when they subscribe
+            # Create Stripe customer
+            try:
+                stripe_customer = stripe.Customer.create(
+                    email=user_data.email,
+                    name=user_data.full_name,
+                    metadata={"user_id": str(new_user.id)}
+                )
+                new_user.stripe_customer_id = stripe_customer.id
+                session.commit()
+            except Exception as e:
+                print(f"Stripe customer creation failed: {e}")
             
             # Create access token
             access_token = create_access_token({"sub": str(new_user.id)})
@@ -290,188 +298,96 @@ def create_auth_app(app: FastAPI):
     
     @app.post("/auth/subscription/checkout")
     async def create_subscription_checkout(
+        checkout_data: SubscriptionCheckout,
         current_user: User = Depends(get_current_user)
     ):
-        """Create Viva payment order for annual subscription"""
-        session = db_manager.get_session()
         try:
-            # Create payment order with Viva
-            order_result = viva_payments.create_payment_order(
-                user_email=current_user.email,
-                user_id=current_user.id,
-                is_recurring=True  # Enable recurring for subscription
+            # Create Stripe checkout session
+            checkout_session = stripe.checkout.Session.create(
+                payment_method_types=['card'],
+                line_items=[{
+                    'price': checkout_data.price_id,
+                    'quantity': 1,
+                }],
+                mode='subscription',
+                success_url=os.getenv("FRONTEND_URL", "http://localhost:3000") + "/subscription/success?session_id={CHECKOUT_SESSION_ID}",
+                cancel_url=os.getenv("FRONTEND_URL", "http://localhost:3000") + "/subscription/cancelled",
+                customer=current_user.stripe_customer_id,
+                metadata={
+                    'user_id': str(current_user.id)
+                }
             )
             
-            if not order_result:
-                raise HTTPException(status_code=500, detail="Failed to create payment order")
-            
-            # Store the order code for reference
-            user = session.query(User).filter(User.id == current_user.id).first()
-            user.viva_order_code = order_result["order_code"]
-            session.commit()
-            
-            return {
-                "checkout_url": order_result["checkout_url"],
-                "order_code": order_result["order_code"]
-            }
+            return {"checkout_url": checkout_session.url}
         except Exception as e:
-            print(f"Error creating subscription checkout: {e}")
             raise HTTPException(status_code=400, detail=str(e))
-        finally:
-            session.close()
+    
+    @app.post("/auth/sms-credits/checkout")
+    async def buy_sms_credits(
+        credits_data: SMSCreditsCheckout,
+        current_user: User = Depends(get_current_user)
+    ):
+        try:
+            # Calculate SMS messages from EUR amount (0.15 per SMS)
+            sms_count = int(credits_data.amount / 0.15)
+            
+            # Create Stripe checkout session
+            checkout_session = stripe.checkout.Session.create(
+                payment_method_types=['card'],
+                line_items=[{
+                    'price_data': {
+                        'currency': 'eur',
+                        'product_data': {
+                            'name': f'SMS Credits ({sms_count} messages)',
+                        },
+                        'unit_amount': int(credits_data.amount * 100),  # Amount in cents
+                    },
+                    'quantity': 1,
+                }],
+                mode='payment',
+                success_url=os.getenv("FRONTEND_URL", "http://localhost:3000") + "/sms-credits/success?session_id={CHECKOUT_SESSION_ID}",
+                cancel_url=os.getenv("FRONTEND_URL", "http://localhost:3000") + "/sms-credits/cancelled",
+                customer=current_user.stripe_customer_id,
+                metadata={
+                    'user_id': str(current_user.id),
+                    'credits_amount': str(credits_data.amount)
+                }
+            )
+            
+            return {"checkout_url": checkout_session.url}
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=str(e))
     
     @app.post("/auth/subscription/cancel")
     async def cancel_subscription(current_user: User = Depends(get_current_user)):
-        """Cancel recurring subscription"""
         session = db_manager.get_session()
         try:
-            if not current_user.viva_card_token:
+            if not current_user.stripe_subscription_id:
                 raise HTTPException(status_code=400, detail="No active subscription found")
             
-            # Cancel the recurring payment authorization
-            success = viva_payments.cancel_recurring(current_user.viva_card_token)
+            # Cancel the subscription at period end
+            stripe.Subscription.modify(
+                current_user.stripe_subscription_id,
+                cancel_at_period_end=True
+            )
             
-            if success:
-                # Update user record
-                user = session.query(User).filter(User.id == current_user.id).first()
-                user.subscription_status = SubscriptionStatus.CANCELLED
-                user.viva_card_token = None
-                session.commit()
-                
-                return {"message": "Subscription cancelled successfully"}
-            else:
-                raise HTTPException(status_code=400, detail="Failed to cancel subscription")
-                
-        except Exception as e:
-            print(f"Error cancelling subscription: {e}")
+            # Update user record
+            user = session.query(User).filter(User.id == current_user.id).first()
+            user.subscription_status = 'canceling'
+            session.commit()
+            
+            return {"message": "Subscription will be cancelled at the end of the current period"}
+        except stripe.error.StripeError as e:
             raise HTTPException(status_code=400, detail=str(e))
         finally:
             session.close()
     
-    @app.get("/auth/viva/webhook")
-    async def viva_webhook_verification():
-        """Handle Viva webhook verification GET request"""
-        # Get the webhook key from environment
-        verification_key = os.getenv("VIVA_WEBHOOK_KEY", "")
-        
-        if not verification_key:
-            # Generate a new key if not set
-            import secrets
-            verification_key = secrets.token_urlsafe(32)
-            print(f"Generated webhook verification key: {verification_key}")
-            print("Please add this to your .env file as VIVA_WEBHOOK_KEY")
-        
-        # According to Viva docs, return the key as plain text with quotes
-        # Not JSON wrapped, but the actual string with quotes
-        from fastapi.responses import Response
-        return Response(
-            content=f'"{verification_key}"',
-            media_type="text/plain",
-            headers={"Cache-Control": "no-cache"}
-        )
+    @app.post("/auth/stripe/webhook")
+    async def stripe_webhook(request: dict, stripe_signature: str = Header(None)):
+        # Handle Stripe webhooks for subscription updates
+        # This would be implemented with proper webhook validation
+        pass
     
-    @app.post("/auth/viva/webhook")
-    async def viva_webhook(
-        request: Request,
-        authorization: str = Header(None)
-    ):
-        """Handle Viva payment webhooks according to their guidelines"""
-        session = db_manager.get_session()
-        try:
-            # Get request body
-            body = await request.body()
-            
-            # Verify webhook using Authorization header
-            if not viva_payments.verify_webhook(body, authorization or ""):
-                # Return 200 with error message as per Viva guidelines
-                return {"status": "error", "message": "Invalid authorization"}
-            
-            # Parse webhook data
-            webhook_data = json.loads(body)
-            
-            # Process webhook
-            result = viva_payments.process_webhook(webhook_data)
-            
-            if result["success"] and result["action"] == "payment_created" and result["user_id"]:
-                # Payment successful - activate subscription
-                user = session.query(User).filter(User.id == result["user_id"]).first()
-                if user:
-                    # Store transaction info
-                    user.viva_transaction_id = result["transaction_id"]
-                    
-                    # Create payment record
-                    payment = Payment(
-                        user_id=user.id,
-                        amount=result["amount"] / 100,  # Convert from cents
-                        currency="EUR",
-                        payment_type="subscription",
-                        payment_provider="viva",
-                        viva_transaction_id=result["transaction_id"],
-                        viva_order_code=result["order_code"],
-                        status="succeeded"
-                    )
-                    session.add(payment)
-                    
-                    # Activate subscription
-                    user.subscription_status = SubscriptionStatus.ACTIVE
-                    user.subscription_start_date = datetime.utcnow()
-                    user.subscription_end_date = datetime.utcnow() + timedelta(days=365)
-                    
-                    # TODO: Get card token from transaction for recurring payments
-                    # This requires additional API call to get transaction details
-                    
-                    session.commit()
-                    
-            elif result["action"] == "payment_failed":
-                # Log failed payment
-                if result["user_id"]:
-                    payment = Payment(
-                        user_id=result["user_id"],
-                        amount=result["amount"] / 100 if result["amount"] else 0,
-                        currency="EUR",
-                        payment_type="subscription",
-                        payment_provider="viva",
-                        viva_transaction_id=result["transaction_id"],
-                        viva_order_code=result["order_code"],
-                        status="failed"
-                    )
-                    session.add(payment)
-                    session.commit()
-            
-            return {"status": "ok"}
-            
-        except Exception as e:
-            print(f"Webhook processing error: {e}")
-            # Return 200 to prevent retries for processing errors
-            return {"status": "error", "message": str(e)}
-        finally:
-            session.close()
-    
-    @app.get("/auth/subscription/success")
-    async def subscription_success(
-        order_code: str,
-        current_user: User = Depends(get_current_user)
-    ):
-        """Handle successful payment return from Viva"""
-        # The actual subscription activation happens via webhook
-        # This endpoint just confirms to the user
-        return {
-            "message": "Payment successful! Your subscription is being activated.",
-            "order_code": order_code
-        }
-    
-    @app.get("/auth/subscription/failed")
-    async def subscription_failed(
-        order_code: Optional[str] = None,
-        current_user: User = Depends(get_current_user)
-    ):
-        """Handle failed/cancelled payment return from Viva"""
-        return {
-            "message": "Payment was not completed. Please try again.",
-            "order_code": order_code
-        }
-    
-    # Keep all the other endpoints unchanged...
     @app.get("/auth/saved-searches", response_model=List[dict])
     async def get_saved_searches(current_user: User = Depends(get_current_user)):
         session = db_manager.get_session()

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, Boolean, Float, Text, ForeignKey, Enum, Table, UniqueConstraint
+from sqlalchemy import Column, Integer, String, DateTime, Boolean, Float, Text, ForeignKey, Enum, Table
 from sqlalchemy.orm import relationship
 from datetime import datetime, timedelta
 import enum
@@ -52,12 +52,6 @@ class User(Base):
     stripe_customer_id = Column(String(255))
     stripe_subscription_id = Column(String(255))
     
-    # Viva Payments fields
-    viva_customer_id = Column(String(255))  # Viva customer token
-    viva_order_code = Column(String(255))  # Latest order code
-    viva_transaction_id = Column(String(255))  # Original transaction for recurring
-    viva_card_token = Column(String(255))  # Token for recurring payments
-    
     # Notification settings
     email_notifications = Column(Boolean, default=True)
     push_notifications = Column(Boolean, default=True)
@@ -74,8 +68,6 @@ class User(Base):
     notification_logs = relationship("NotificationLog", back_populates="user", cascade="all, delete-orphan")
     saved_searches = relationship("SavedSearch", back_populates="user", cascade="all, delete-orphan")
     read_posts = relationship("UserReadPost", back_populates="user", cascade="all, delete-orphan")
-    devices = relationship("UserDevice", back_populates="user", cascade="all, delete-orphan")
-    push_subscriptions = relationship("PushSubscription", back_populates="user", cascade="all, delete-orphan")
 
 class Payment(Base):
     __tablename__ = 'payments'
@@ -85,10 +77,7 @@ class Payment(Base):
     amount = Column(Float, nullable=False)
     currency = Column(String(3), default='EUR')
     payment_type = Column(String(50))  # subscription, sms_credits
-    payment_provider = Column(String(20), default='stripe')  # stripe, viva
     stripe_payment_intent_id = Column(String(255))
-    viva_transaction_id = Column(String(255))  # Viva transaction ID
-    viva_order_code = Column(String(255))  # Viva order code
     status = Column(String(50))  # pending, succeeded, failed
     created_at = Column(DateTime, default=datetime.utcnow)
     
@@ -138,26 +127,6 @@ class UserReadPost(Base):
     # Relationships
     user = relationship("User", back_populates="read_posts")
 
-class UserDevice(Base):
-    __tablename__ = 'user_devices'
-    
-    id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
-    device_id = Column(String(255), nullable=False)  # Unique device identifier
-    device_name = Column(String(255))  # User-friendly name
-    device_type = Column(String(50))  # mobile, desktop, tablet
-    user_agent = Column(Text)
-    ip_address = Column(String(45))
-    last_login = Column(DateTime, default=datetime.utcnow)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    
-    # Relationships
-    user = relationship("User", back_populates="devices")
-    
-    __table_args__ = (
-        UniqueConstraint('user_id', 'device_id'),
-    )
-
 class PushSubscription(Base):
     __tablename__ = 'push_subscriptions'
     
@@ -167,9 +136,6 @@ class PushSubscription(Base):
     p256dh = Column(Text, nullable=False)
     auth = Column(Text, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
-    
-    # Relationships
-    user = relationship("User", back_populates="push_subscriptions")
     
     # Unique constraint
     __table_args__ = (
