@@ -95,16 +95,16 @@ const VivaCheckout: React.FC<VivaCheckoutProps> = ({ onSuccess, onError }) => {
     setLoading(false);
   };
 
-  const handlePaymentSuccess = async (response) => {
+  const handlePaymentSuccess = async (response: { chargeToken: string }) => {
     // Payment was successful
     // The actual subscription activation happens via webhook
     onSuccess({
-      orderCode: orderCode,
+      orderCode: orderCode!,
       token: response.chargeToken
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!vivaForm) return;
 
