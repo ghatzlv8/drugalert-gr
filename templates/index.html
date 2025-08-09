@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EOF Scraper - Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <style>
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 0;
+        }
+        .feature-card {
+            transition: transform 0.2s;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        .beta-badge {
+            background: linear-gradient(45deg, #ff6b6b, #f06595);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-newspaper"></i> EOF Scraper
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link active" href="/"><i class="bi bi-house"></i> Home</a>
+                <a class="nav-link" href="/beta-dashboard"><i class="bi bi-graph-up"></i> Beta Dashboard</a>
+                <a class="nav-link" href="/docs"><i class="bi bi-book"></i> API Docs</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <div class="container text-center">
+            <h1 class="display-4 mb-4">
+                <i class="bi bi-newspaper"></i> EOF Scraper
+            </h1>
+            <p class="lead mb-4">
+                Automated scraping and monitoring system for EOF (National Organization for Medicines) announcements
+            </p>
+            <div class="row justify-content-center">
+                <div class="col-auto">
+                    <a href="/beta-dashboard" class="btn btn-light btn-lg">
+                        <i class="bi bi-graph-up"></i> View Beta Dashboard
+                        <span class="beta-badge ms-2">NEW</span>
+                    </a>
+                </div>
+                <div class="col-auto">
+                    <a href="/docs" class="btn btn-outline-light btn-lg">
+                        <i class="bi bi-book"></i> API Documentation
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card feature-card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-collection display-4 text-primary mb-3"></i>
+                        <h4>Multiple Categories</h4>
+                        <p>Monitors all EOF categories including medicines, veterinary products, cosmetics, and more</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card feature-card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-arrow-repeat display-4 text-success mb-3"></i>
+                        <h4>Automated Updates</h4>
+                        <p>Regularly scrapes and updates the database with the latest announcements</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card feature-card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-bar-chart display-4 text-info mb-3"></i>
+                        <h4>Analytics Dashboard</h4>
+                        <p>View aggregated statistics and trends across all announcement categories</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-12">
+                <h3 class="mb-4">Available Endpoints</h3>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Endpoint</th>
+                                <th>Method</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>/</code></td>
+                                <td><span class="badge bg-success">GET</span></td>
+                                <td>This page</td>
+                            </tr>
+                            <tr>
+                                <td><code>/beta-dashboard</code></td>
+                                <td><span class="badge bg-success">GET</span></td>
+                                <td>Beta analytics dashboard with aggregated statistics</td>
+                            </tr>
+                            <tr>
+                                <td><code>/categories</code></td>
+                                <td><span class="badge bg-success">GET</span></td>
+                                <td>List all categories</td>
+                            </tr>
+                            <tr>
+                                <td><code>/posts</code></td>
+                                <td><span class="badge bg-success">GET</span></td>
+                                <td>List posts with pagination and filtering</td>
+                            </tr>
+                            <tr>
+                                <td><code>/docs</code></td>
+                                <td><span class="badge bg-success">GET</span></td>
+                                <td>Interactive API documentation</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">EOF Scraper &copy; 2025</p>
+        </div>
+    </footer>
+</body>
+</html>

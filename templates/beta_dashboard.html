@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EOF Beta Dashboard - Συγκεντρωτικά Στοιχεία</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .beta-badge {
+            background: linear-gradient(45deg, #ff6b6b, #f06595);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .category-card {
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+        .category-card:hover {
+            transform: translateY(-5px);
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+        }
+        .category-type-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin: 2px;
+        }
+        .type-farmaka { background-color: #3498db; color: white; }
+        .type-ktiniatrika { background-color: #2ecc71; color: white; }
+        .type-kallintika { background-color: #e74c3c; color: white; }
+        .type-iatrotexnologika { background-color: #f39c12; color: white; }
+        .type-vioktona { background-color: #9b59b6; color: white; }
+        .type-diatrofika { background-color: #1abc9c; color: white; }
+        .type-kannavi { background-color: #34495e; color: white; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-newspaper"></i> EOF Scraper
+                <span class="beta-badge">BETA</span>
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/"><i class="bi bi-house"></i> Κύριο Dashboard</a>
+                <a class="nav-link active" href="/beta-dashboard"><i class="bi bi-graph-up"></i> Beta Dashboard</a>
+                <a class="nav-link" href="/admin"><i class="bi bi-gear"></i> Admin</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="mb-4">
+                    <i class="bi bi-graph-up-arrow"></i> Συγκεντρωτικά Στοιχεία EOF
+                    <span class="beta-badge">BETA</span>
+                </h1>
+            </div>
+        </div>
+
+        <!-- Summary Statistics -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card stat-card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-collection"></i> Συνολικές Κατηγορίες</h5>
+                        <h2 class="mb-0">{{ stats.total_categories }}</h2>
+                        <small>{{ stats.main_categories }} κύριες, {{ stats.subcategories }} υποκατηγορίες</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-file-text"></i> Συνολικές Ανακοινώσεις</h5>
+                        <h2 class="mb-0">{{ stats.total_posts }}</h2>
+                        <small>Από όλες τις κατηγορίες</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-calendar-week"></i> Νέες (7 ημέρες)</h5>
+                        <h2 class="mb-0">{{ stats.recent_posts }}</h2>
+                        <small>Τελευταία εβδομάδα</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-paperclip"></i> Συνημμένα Αρχεία</h5>
+                        <h2 class="mb-0">{{ stats.total_attachments }}</h2>
+                        <small>PDF, DOC, XLS</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-pie-chart"></i> Κατανομή Ανακοινώσεων ανά Τύπο</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="categoryTypeChart" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-bar-chart"></i> Ανακοινώσεις ανά Μήνα</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="monthlyPostsChart" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories by Type -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h3 class="mb-3"><i class="bi bi-tags"></i> Κατηγορίες ανά Τύπο</h3>
+            </div>
+            {% for category_type, categories in categories_by_type.items() %}
+            <div class="col-md-6 col-lg-4 mb-3">
+                <div class="card category-card h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <span class="category-type-badge type-{{ category_type }}">
+                                {{ category_type_names[category_type] }}
+                            </span>
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled mb-0">
+                            {% for category in categories %}
+                            <li class="mb-2">
+                                <a href="/category/{{ category.slug }}" class="text-decoration-none">
+                                    <i class="bi bi-folder2-open"></i> {{ category.name }}
+                                    <span class="badge bg-secondary float-end">{{ category.post_count }}</span>
+                                </a>
+                                {% if category.subcategories %}
+                                <ul class="list-unstyled ms-3 mt-1">
+                                    {% for subcat in category.subcategories %}
+                                    <li>
+                                        <small>
+                                            <a href="/category/{{ subcat.slug }}" class="text-muted text-decoration-none">
+                                                <i class="bi bi-folder"></i> {{ subcat.name }}
+                                                <span class="badge bg-light text-dark">{{ subcat.post_count }}</span>
+                                            </a>
+                                        </small>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                                {% endif %}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Recent Posts Table -->
+        <div class="row">
+            <div class="col-12">
+                <h3 class="mb-3"><i class="bi bi-clock-history"></i> Πρόσφατες Ανακοινώσεις</h3>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Ημερομηνία</th>
+                                        <th>Τίτλος</th>
+                                        <th>Κατηγορία</th>
+                                        <th>Τύπος</th>
+                                        <th>Ενέργειες</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for post in recent_posts %}
+                                    <tr>
+                                        <td>{{ post.publish_date.strftime('%d/%m/%Y') if post.publish_date else 'N/A' }}</td>
+                                        <td>
+                                            <a href="{{ post.url }}" target="_blank" class="text-decoration-none">
+                                                {{ post.title[:80] }}{% if post.title|length > 80 %}...{% endif %}
+                                            </a>
+                                        </td>
+                                        <td>{{ post.category.name }}</td>
+                                        <td>
+                                            <span class="category-type-badge type-{{ post.category.category_type }}">
+                                                {{ category_type_names[post.category.category_type] }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="{{ post.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-box-arrow-up-right"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Category Type Pie Chart
+        const categoryTypeData = {{ category_type_data | tojson }};
+        const ctxType = document.getElementById('categoryTypeChart').getContext('2d');
+        new Chart(ctxType, {
+            type: 'doughnut',
+            data: {
+                labels: categoryTypeData.labels,
+                datasets: [{
+                    data: categoryTypeData.values,
+                    backgroundColor: [
+                        '#3498db', '#2ecc71', '#e74c3c', '#f39c12', 
+                        '#9b59b6', '#1abc9c', '#34495e'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right'
+                    }
+                }
+            }
+        });
+
+        // Monthly Posts Bar Chart
+        const monthlyData = {{ monthly_data | tojson }};
+        const ctxMonthly = document.getElementById('monthlyPostsChart').getContext('2d');
+        new Chart(ctxMonthly, {
+            type: 'bar',
+            data: {
+                labels: monthlyData.labels,
+                datasets: [{
+                    label: 'Ανακοινώσεις',
+                    data: monthlyData.values,
+                    backgroundColor: '#667eea'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
