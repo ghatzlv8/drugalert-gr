@@ -8,6 +8,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<any>(null);
   const [users, setUsers] = useState<any[]>([]);
+  const [adminEmail, setAdminEmail] = useState('');
   const [adminPassword, setAdminPassword] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -29,7 +30,7 @@ export default function AdminDashboard() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: 'ghatz@lv8.gr',
+          email: adminEmail,
           password: adminPassword
         })
       });
@@ -137,10 +138,25 @@ export default function AdminDashboard() {
               Διαχείριση DrugAlert.gr
             </h2>
             <p className="mt-2 text-center text-sm text-gray-600">
-              Εισάγετε τον κωδικό διαχειριστή
+              Εισάγετε τα στοιχεία διαχειριστή
             </p>
           </div>
           <form className="mt-8 space-y-6" onSubmit={handleAdminLogin}>
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                Email Διαχειριστή
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                value={adminEmail}
+                onChange={(e) => setAdminEmail(e.target.value)}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                placeholder="admin@drugalert.gr"
+              />
+            </div>
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                 Κωδικός Διαχειριστή

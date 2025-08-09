@@ -861,7 +861,7 @@ def create_auth_app(app: FastAPI):
     async def get_all_users(current_user: User = Depends(get_current_user)):
         """Get all users - admin only"""
         # Check if current user is admin (by email for now)
-        if current_user.email != 'ghatz@lv8.gr':
+        if current_user.email not in ['admin@drugalert.gr', 'ghatz@lv8.gr']:
             raise HTTPException(status_code=403, detail="Not authorized")
         
         session = db_manager.get_session()
@@ -887,7 +887,7 @@ def create_auth_app(app: FastAPI):
     async def get_admin_stats(current_user: User = Depends(get_current_user)):
         """Get admin statistics - admin only"""
         # Check if current user is admin
-        if current_user.email != 'ghatz@lv8.gr':
+        if current_user.email not in ['admin@drugalert.gr', 'ghatz@lv8.gr']:
             raise HTTPException(status_code=403, detail="Not authorized")
         
         session = db_manager.get_session()
