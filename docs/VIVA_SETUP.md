@@ -58,7 +58,7 @@ VIVA_API_KEY=your_api_key
 VIVA_WEBHOOK_KEY=your_webhook_key
 VIVA_PRODUCTION=true  # Set to true for production
 VIVA_SOURCE_CODE=Default  # Or your custom source code
-ANNUAL_SUBSCRIPTION_PRICE=4900  # 49.00 EUR in cents
+ANNUAL_SUBSCRIPTION_PRICE=1499  # 14.99 EUR in cents
 ```
 
 ## Step 5: Run Database Migration
@@ -162,7 +162,7 @@ curl -X POST https://drugalert.gr/api/auth/viva/webhook \
     "eventData": {
       "transactionId": "test123",
       "orderCode": "order123",
-      "amount": 4900,
+      "amount": 1499,
       "merchantTrns": "USER_1_ANNUAL_20240809"
     }
   }'

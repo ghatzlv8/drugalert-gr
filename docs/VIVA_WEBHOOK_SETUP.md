@@ -58,7 +58,7 @@ curl -X POST https://drugalert.gr/api/auth/viva/webhook \
     "eventData": {
       "transactionId": "test-transaction-123",
       "orderCode": "test-order-123",
-      "amount": 4900,
+      "amount": 1499,
       "merchantTrns": "USER_1_ANNUAL_20240809",
       "statusId": "F",
       "fullName": "Test User",
