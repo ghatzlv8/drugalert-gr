@@ -2,6 +2,10 @@
 """
 Migration script to add billing fields to the users table
 """
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from sqlalchemy import create_engine, text
 from config.config import DATABASE_URL
 
