@@ -77,8 +77,10 @@ export default function Privacy() {
               Κοινοποιούμε δεδομένα μόνο σε:
             </p>
             <ul className="list-disc pl-6 text-gray-700 space-y-2">
-              <li>Stripe - για την επεξεργασία πληρωμών</li>
-              <li>Email/SMS παρόχους - για την αποστολή ειδοποιήσεων</li>
+              <li>Viva Payments - για την επεξεργασία πληρωμών</li>
+              <li>Google Analytics - για στατιστικά χρήσης (με τη συγκατάθεσή σας)</li>
+              <li>Google Ads - για στοχευμένες διαφημίσεις (με τη συγκατάθεσή σας)</li>
+              <li>Email παρόχους - για την αποστολή ειδοποιήσεων</li>
               <li>Αρχές - όταν απαιτείται από το νόμο</li>
             </ul>
             <p className="text-gray-700 mt-4">
@@ -123,17 +125,20 @@ export default function Privacy() {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">9. Cookies</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">9. Cookies και Τεχνολογίες Παρακολούθησης</h2>
             <p className="text-gray-700 mb-4">
-              Χρησιμοποιούμε cookies για:
+              Χρησιμοποιούμε διάφορους τύπους cookies:
             </p>
             <ul className="list-disc pl-6 text-gray-700 space-y-2">
-              <li>Διατήρηση της σύνδεσής σας</li>
-              <li>Αποθήκευση προτιμήσεων</li>
-              <li>Βελτίωση της εμπειρίας χρήσης</li>
+              <li><strong>Απαραίτητα cookies:</strong> Για τη λειτουργία του ιστοτόπου και τη διατήρηση της σύνδεσής σας</li>
+              <li><strong>Cookies ανάλυσης:</strong> Google Analytics για στατιστικά χρήσης (μόνο με τη συγκατάθεσή σας)</li>
+              <li><strong>Cookies διαφήμισης:</strong> Google Ads για στοχευμένες διαφημίσεις (μόνο με τη συγκατάθεσή σας)</li>
+              <li><strong>Cookies προτιμήσεων:</strong> Για την αποθήκευση των ρυθμίσεών σας</li>
             </ul>
             <p className="text-gray-700 mt-4">
-              Μπορείτε να διαχειριστείτε τα cookies από τις ρυθμίσεις του browser σας.
+              Χρησιμοποιούμε το Google Consent Mode v2 για να σεβόμαστε τις επιλογές σας σχετικά με τα cookies. 
+              Μπορείτε να διαχειριστείτε τις προτιμήσεις σας ανά πάσα στιγμή από το banner συγκατάθεσης ή τις 
+              <Link href="/cookie-settings" className="text-blue-600 hover:text-blue-500">ρυθμίσεις cookies</Link>.
             </p>
           </section>
 

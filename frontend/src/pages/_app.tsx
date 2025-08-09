@@ -53,6 +53,9 @@ export default function App({ Component, pageProps }: AppProps) {
             'ad_user_data': 'denied',
             'ad_personalization': 'denied',
             'analytics_storage': 'denied',
+            'functionality_storage': 'granted',
+            'personalization_storage': 'granted',
+            'security_storage': 'granted',
             'wait_for_update': 500,
             'region': ['EEA', 'EU', 'GR', 'GB']
           });
@@ -62,7 +65,10 @@ export default function App({ Component, pageProps }: AppProps) {
             'ad_storage': 'granted',
             'ad_user_data': 'granted',
             'ad_personalization': 'granted',
-            'analytics_storage': 'granted'
+            'analytics_storage': 'granted',
+            'functionality_storage': 'granted',
+            'personalization_storage': 'granted',
+            'security_storage': 'granted'
           });
         `}
       </Script>
@@ -78,7 +84,20 @@ export default function App({ Component, pageProps }: AppProps) {
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
-          gtag('config', 'G-HTRYE07M9X');
+          
+          // Configure Google Analytics with enhanced privacy features
+          gtag('config', 'G-HTRYE07M9X', {
+            'anonymize_ip': true,
+            'ads_data_redaction': true,
+            'allow_ad_personalization_signals': false,
+            'send_page_view': true
+          });
+          
+          // Set up Enhanced Conversions data redaction
+          gtag('set', 'ads_data_redaction', true);
+          
+          // If you have Google Ads, add the conversion tracking here
+          // Example: gtag('config', 'AW-XXXXXXXXX');
         `}
       </Script>
       

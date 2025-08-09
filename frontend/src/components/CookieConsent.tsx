@@ -13,6 +13,9 @@ interface ConsentState {
   ad_storage: 'granted' | 'denied';
   ad_user_data: 'granted' | 'denied';
   ad_personalization: 'granted' | 'denied';
+  functionality_storage: 'granted' | 'denied';
+  personalization_storage: 'granted' | 'denied';
+  security_storage: 'granted' | 'denied';
 }
 
 export default function CookieConsent() {
@@ -23,7 +26,10 @@ export default function CookieConsent() {
     analytics_storage: 'denied',
     ad_storage: 'denied',
     ad_user_data: 'denied',
-    ad_personalization: 'denied'
+    ad_personalization: 'denied',
+    functionality_storage: 'granted',
+    personalization_storage: 'granted',
+    security_storage: 'granted'
   });
 
   useEffect(() => {
@@ -67,7 +73,10 @@ export default function CookieConsent() {
         'ad_storage': consentState.ad_storage,
         'ad_user_data': consentState.ad_user_data,
         'ad_personalization': consentState.ad_personalization,
-        'analytics_storage': consentState.analytics_storage
+        'analytics_storage': consentState.analytics_storage,
+        'functionality_storage': consentState.functionality_storage,
+        'personalization_storage': consentState.personalization_storage,
+        'security_storage': consentState.security_storage
       });
     }
   };
@@ -77,7 +86,10 @@ export default function CookieConsent() {
       analytics_storage: 'granted',
       ad_storage: 'granted',
       ad_user_data: 'granted',
-      ad_personalization: 'granted'
+      ad_personalization: 'granted',
+      functionality_storage: 'granted',
+      personalization_storage: 'granted',
+      security_storage: 'granted'
     };
     
     setConsent(newConsent);
@@ -92,7 +104,10 @@ export default function CookieConsent() {
       analytics_storage: 'denied',
       ad_storage: 'denied',
       ad_user_data: 'denied',
-      ad_personalization: 'denied'
+      ad_personalization: 'denied',
+      functionality_storage: 'granted',
+      personalization_storage: 'granted',
+      security_storage: 'granted'
     };
     
     setConsent(newConsent);
