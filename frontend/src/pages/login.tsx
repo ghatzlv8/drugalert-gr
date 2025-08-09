@@ -20,9 +20,15 @@ export default function Login() {
     try {
       await login(email, password)
       
+      // Add a small delay to ensure state is saved
+      await new Promise(resolve => setTimeout(resolve, 100))
+      
       // Redirect to requested page or dashboard
       const redirect = router.query.redirect as string
-      router.push(redirect || '/dashboard')
+      const targetUrl = redirect || '/dashboard'
+      
+      // Use window.location for hard redirect to ensure proper page load
+      window.location.href = targetUrl
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
