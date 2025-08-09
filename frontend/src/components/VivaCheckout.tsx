@@ -111,7 +111,7 @@ const VivaCheckout: React.FC<VivaCheckoutProps> = ({ onSuccess, onError }) => {
     setLoading(true);
     
     // Create token and process payment
-    vivaForm.createToken((result) => {
+    vivaForm.createToken((result: { error?: any }) => {
       if (result.error) {
         onError(result.error);
         setLoading(false);
