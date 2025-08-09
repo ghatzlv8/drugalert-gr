@@ -29,7 +29,7 @@ export default function AdminDashboard() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: 'admin@drugalert.gr',
+          email: 'ghatz@lv8.gr',
           password: adminPassword
         })
       });
