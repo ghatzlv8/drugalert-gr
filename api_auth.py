@@ -42,6 +42,7 @@ class UserResponse(BaseModel):
     full_name: Optional[str]
     subscription_status: str
     trial_end_date: datetime
+    trial_days_remaining: Optional[int]
     subscription_end_date: Optional[datetime]
     email_notifications: bool
     push_notifications: bool
@@ -207,7 +208,20 @@ def create_auth_app(app: FastAPI):
     
     @app.get("/auth/me", response_model=UserResponse)
     async def get_me(current_user: User = Depends(get_current_user)):
-        return UserResponse.from_orm(current_user)
+        # Calculate trial days remaining
+        trial_days_remaining = None
+        if current_user.subscription_status == SubscriptionStatus.TRIAL:
+            time_remaining = current_user.trial_end_date - datetime.utcnow()
+            if time_remaining.total_seconds() > 0:
+                # Round up to show full days
+                trial_days_remaining = int(time_remaining.total_seconds() / 86400) + (1 if time_remaining.total_seconds() % 86400 > 0 else 0)
+            else:
+                trial_days_remaining = 0
+        
+        # Create response with calculated trial_days_remaining
+        user_data = UserResponse.from_orm(current_user).dict()
+        user_data['trial_days_remaining'] = trial_days_remaining
+        return user_data
     
     @app.post("/auth/subscription/checkout")
     async def create_subscription_checkout(
