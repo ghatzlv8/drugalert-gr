@@ -2,9 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAuthStore } from '../store/authStore';
 import Link from 'next/link';
-import { Bell, FileText, Settings, CreditCard, LogOut, Menu, X, Shield } from 'lucide-react';
-import Navigation from '../components/Navigation';
-import Logo from '../components/Logo';
 import Layout from '../components/Layout';
 import { DocumentTextIcon, BellIcon, FunnelIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 

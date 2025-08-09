@@ -9,7 +9,6 @@ const formatDate = (dateString: string) => {
   return `${day}/${month}/${year}`;
 };
 import Link from 'next/link';
-import Logo from '../components/Logo';
 import Layout from '../components/Layout';
 
 interface Category {
