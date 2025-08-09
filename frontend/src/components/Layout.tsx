@@ -1,6 +1,6 @@
 import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { Bars3Icon, BellIcon, XMarkIcon, HomeIcon, ChartBarIcon, BellAlertIcon, CreditCardIcon } from '@heroicons/react/24/outline'
+import { Bars3Icon, BellIcon, XMarkIcon, HomeIcon, ChartBarIcon, BellAlertIcon, CreditCardIcon, Cog6ToothIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useAuthStore } from '@/lib/store/auth'
@@ -18,17 +18,19 @@ export default function Layout({ children }: LayoutProps) {
   const router = useRouter()
   const { user, isAuthenticated, logout } = useAuthStore()
 
-  const navigation = [
+  const navigation = isAuthenticated ? [
+    { name: 'Αρχική', href: '/dashboard', current: router.pathname === '/dashboard', icon: HomeIcon },
+    { name: 'Ανακοινώσεις', href: '/alerts', current: router.pathname === '/alerts', icon: BellAlertIcon },
+    { name: 'Ρυθμίσεις', href: '/settings', current: router.pathname === '/settings', icon: Cog6ToothIcon },
+    { name: 'Συνδρομή', href: '/subscription', current: router.pathname === '/subscription', icon: CreditCardIcon },
+  ] : [
     { name: 'Αρχική', href: '/', current: router.pathname === '/', icon: HomeIcon },
-    { name: 'Πίνακας Ελέγχου', href: '/dashboard', current: router.pathname === '/dashboard', auth: true, icon: ChartBarIcon },
-    { name: 'Ειδοποιήσεις', href: '/alerts', current: router.pathname === '/alerts', auth: true, icon: BellAlertIcon },
     { name: 'Τιμολόγηση', href: '/pricing', current: router.pathname === '/pricing', icon: CreditCardIcon },
   ]
 
   const userNavigation = [
-    { name: 'Το Προφίλ μου', href: '/profile' },
     { name: 'Ρυθμίσεις', href: '/settings' },
-    { name: 'Χρεώσεις', href: '/billing' },
+    { name: 'Συνδρομή', href: '/subscription' },
   ]
 
   const handleLogout = () => {
@@ -50,9 +52,7 @@ export default function Layout({ children }: LayoutProps) {
                     </Link>
                   </div>
                   <div className="hidden sm:-my-px sm:ml-10 sm:flex sm:space-x-1">
-                    {navigation
-                      .filter(item => !item.auth || isAuthenticated)
-                      .map((item) => {
+                    {navigation.map((item) => {
                         const Icon = item.icon;
                         return (
                           <Link
@@ -169,9 +169,7 @@ export default function Layout({ children }: LayoutProps) {
 
             <Disclosure.Panel className="sm:hidden bg-white shadow-lg">
               <div className="space-y-1 pb-3 pt-2">
-                {navigation
-                  .filter(item => !item.auth || isAuthenticated)
-                  .map((item) => {
+                {navigation.map((item) => {
                     const Icon = item.icon;
                     return (
                       <Disclosure.Button
