@@ -250,7 +250,7 @@ export default function SubscriptionPage() {
                 <div className="ml-4">
                   <h4 className="text-xl font-semibold text-gray-900">Δοκιμαστική Περίοδος</h4>
                   <p className="text-sm text-gray-500">
-                    {subscription?.trial_days_remaining || 0} ημέρες απομένουν
+                    {user?.trial_days_remaining || 0} ημέρες απομένουν
                   </p>
                 </div>
               </div>
