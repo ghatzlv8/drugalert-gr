@@ -170,10 +170,23 @@ def create_auth_app(app: FastAPI):
             # Create access token
             access_token = create_access_token({"sub": str(new_user.id)})
             
+            # Calculate trial days remaining for new user (should be 4)
+            trial_days_remaining = None
+            if new_user.subscription_status == SubscriptionStatus.TRIAL:
+                time_remaining = new_user.trial_end_date - datetime.utcnow()
+                if time_remaining.total_seconds() > 0:
+                    trial_days_remaining = int(time_remaining.total_seconds() / 86400) + (1 if time_remaining.total_seconds() % 86400 > 0 else 0)
+                else:
+                    trial_days_remaining = 0
+            
+            # Create user response with trial_days_remaining
+            user_data = UserResponse.from_orm(new_user).dict()
+            user_data['trial_days_remaining'] = trial_days_remaining
+            
             return {
                 "access_token": access_token,
                 "token_type": "bearer",
-                "user": UserResponse.from_orm(new_user).dict()
+                "user": user_data
             }
         finally:
             session.close()
@@ -198,10 +211,23 @@ def create_auth_app(app: FastAPI):
             # Create access token
             access_token = create_access_token({"sub": str(user.id)})
             
+            # Calculate trial days remaining
+            trial_days_remaining = None
+            if user.subscription_status == SubscriptionStatus.TRIAL:
+                time_remaining = user.trial_end_date - datetime.utcnow()
+                if time_remaining.total_seconds() > 0:
+                    trial_days_remaining = int(time_remaining.total_seconds() / 86400) + (1 if time_remaining.total_seconds() % 86400 > 0 else 0)
+                else:
+                    trial_days_remaining = 0
+            
+            # Create user response with trial_days_remaining
+            user_data = UserResponse.from_orm(user).dict()
+            user_data['trial_days_remaining'] = trial_days_remaining
+            
             return {
                 "access_token": access_token,
                 "token_type": "bearer",
-                "user": UserResponse.from_orm(user).dict()
+                "user": user_data
             }
         finally:
             session.close()
