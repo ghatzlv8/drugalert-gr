@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { pushNotificationService } from '../services/pushNotifications';
-import Logo from '../components/Logo';
+import Layout from '@/components/Layout';
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -119,49 +119,21 @@ export default function SettingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Φόρτωση ρυθμίσεων...</p>
+      <Layout>
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Φόρτωση ρυθμίσεων...</p>
+          </div>
         </div>
-      </div>
+      </Layout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Navigation */}
-      <nav className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center space-x-8">
-              <Logo showText={true} />
-              <div className="hidden md:flex space-x-4">
-                <Link href="/dashboard" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
-                  Αρχική
-                </Link>
-                <Link href="/alerts" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
-                  Ανακοινώσεις
-                </Link>
-                <Link href="/settings" className="text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
-                  Ρυθμίσεις
-                </Link>
-                <Link href="/subscription" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
-                  Συνδρομή
-                </Link>
-              </div>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-            >
-              Αποσύνδεση
-            </button>
-          </div>
-        </div>
-      </nav>
-
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <Layout>
+      <div className="min-h-screen bg-gray-50">
+        <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-8">Ρυθμίσεις Ειδοποιήσεων</h2>
 
         <div className="bg-white rounded-lg shadow p-6">
@@ -278,7 +250,8 @@ export default function SettingsPage() {
             </div>
           </dl>
         </div>
-      </main>
-    </div>
+        </main>
+      </div>
+    </Layout>
   );
 }

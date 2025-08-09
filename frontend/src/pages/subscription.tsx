@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import Layout from '@/components/Layout';
 
 export default function SubscriptionPage() {
   const router = useRouter();
@@ -174,49 +175,21 @@ export default function SubscriptionPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Φόρτωση συνδρομής...</p>
+      <Layout>
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Φόρτωση συνδρομής...</p>
+          </div>
         </div>
-      </div>
+      </Layout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Navigation */}
-      <nav className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center space-x-8">
-              <h1 className="text-xl font-bold text-gray-900">DrugAlert.gr</h1>
-              <div className="hidden md:flex space-x-4">
-                <Link href="/dashboard" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
-                  Αρχική
-                </Link>
-                <Link href="/alerts" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
-                  Ανακοινώσεις
-                </Link>
-                <Link href="/settings" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
-                  Ρυθμίσεις
-                </Link>
-                <Link href="/subscription" className="text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
-                  Συνδρομή
-                </Link>
-              </div>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-            >
-              Αποσύνδεση
-            </button>
-          </div>
-        </div>
-      </nav>
-
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <Layout>
+      <div className="min-h-screen bg-gray-50">
+        <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-8">Διαχείριση Συνδρομής</h2>
 
         {/* Current Subscription Status */}
@@ -494,7 +467,8 @@ export default function SubscriptionPage() {
             </div>
           </div>
         )}
-      </main>
-    </div>
+        </main>
+      </div>
+    </Layout>
   );
 }
