@@ -40,12 +40,19 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <>
-      {/* Initialize consent mode for GTM */}
-      <Script id="gtm-consent" strategy="beforeInteractive">
+      {/* Google Tag */}
+      <Script
+        src="https://www.googletagmanager.com/gtag/js?id=GT-M6JNQMGQ"
+        strategy="afterInteractive"
+      />
+      
+      {/* Initialize consent mode and Google tags */}
+      <Script id="google-tags" strategy="afterInteractive">
         {`
-          // Define dataLayer and gtag function for consent mode
+          // Define dataLayer and gtag function
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
           
           // Set default consent mode for EU regions
           gtag('consent', 'default', {
@@ -69,6 +76,14 @@ export default function App({ Component, pageProps }: AppProps) {
             'functionality_storage': 'granted',
             'personalization_storage': 'granted',
             'security_storage': 'granted'
+          });
+          
+          // Configure Google Tag
+          gtag('config', 'GT-M6JNQMGQ');
+          
+          // Configure GA4
+          gtag('config', 'G-HTRYE07M9X', {
+            'send_page_view': true
           });
           
           // Push consent mode initialization event for GTM
