@@ -7,6 +7,7 @@ import { useAuthStore } from '@/lib/store/auth'
 import { pushNotificationService } from '@/services/pushNotifications'
 import PushNotificationPrompt from '@/components/PushNotificationPrompt'
 import EnhancedChatbot from '@/components/EnhancedChatbot'
+import CookieConsent from '@/components/CookieConsent'
 import Script from 'next/script'
 
 const queryClient = new QueryClient({
@@ -49,6 +50,17 @@ export default function App({ Component, pageProps }: AppProps) {
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
+          
+          // Google Consent Mode v2 - Default settings
+          gtag('consent', 'default', {
+            'analytics_storage': 'denied',
+            'ad_storage': 'denied',
+            'ad_user_data': 'denied',
+            'ad_personalization': 'denied',
+            'wait_for_update': 500,
+            'region': ['EEA', 'EU', 'GR']
+          });
+          
           gtag('config', 'G-HTRYE07M9X');
         `}
       </Script>
@@ -57,6 +69,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <Component {...pageProps} />
         <PushNotificationPrompt />
         <EnhancedChatbot />
+        <CookieConsent />
         <Toaster
         position="top-right"
         toastOptions={{

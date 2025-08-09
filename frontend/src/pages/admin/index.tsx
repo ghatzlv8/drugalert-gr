@@ -80,15 +80,12 @@ export default function AdminDashboard() {
           const totalUsers = usersData.length;
           const activeSubscriptions = usersData.filter((u: any) => u.subscription_status === 'active').length;
           const trialUsers = usersData.filter((u: any) => u.subscription_status === 'trial').length;
-          const totalSmsCredits = usersData.reduce((sum: number, u: any) => sum + (u.sms_credits || 0), 0);
-          
           setStats({
             totalUsers,
             activeSubscriptions,
             trialUsers,
             monthlyRevenue: activeSubscriptions * 14.99,
-            totalPosts: 0, // Would need posts endpoint
-            totalSmsCredits
+            totalPosts: 0 // Would need posts endpoint
           });
         } else {
           // Fallback: show empty data if no users
@@ -97,8 +94,7 @@ export default function AdminDashboard() {
             activeSubscriptions: 0,
             trialUsers: 0,
             monthlyRevenue: 0,
-            totalPosts: 0,
-            totalSmsCredits: 0
+            totalPosts: 0
           });
           setUsers([]);
         }
@@ -111,8 +107,7 @@ export default function AdminDashboard() {
         activeSubscriptions: 0,
         trialUsers: 0,
         monthlyRevenue: 0,
-        totalPosts: 0,
-        totalSmsCredits: 0
+        totalPosts: 0
       });
       setUsers([]);
     } finally {
@@ -199,7 +194,7 @@ export default function AdminDashboard() {
         {/* Statistics */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Στατιστικά Συστήματος</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             <div className="bg-white rounded-lg shadow p-4">
               <h3 className="text-sm font-medium text-gray-500">Σύνολο Χρηστών</h3>
               <p className="text-2xl font-bold text-gray-900 mt-1">{stats?.totalUsers || 0}</p>
@@ -219,10 +214,6 @@ export default function AdminDashboard() {
             <div className="bg-white rounded-lg shadow p-4">
               <h3 className="text-sm font-medium text-gray-500">Ανακοινώσεις</h3>
               <p className="text-2xl font-bold text-gray-900 mt-1">{stats?.totalPosts || 0}</p>
-            </div>
-            <div className="bg-white rounded-lg shadow p-4">
-              <h3 className="text-sm font-medium text-gray-500">SMS Credits</h3>
-              <p className="text-2xl font-bold text-gray-900 mt-1">{stats?.totalSmsCredits?.toFixed(2)}€</p>
             </div>
           </div>
         </div>
@@ -245,9 +236,6 @@ export default function AdminDashboard() {
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Τελευταία Σύνδεση
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    SMS Credits
                   </th>
                 </tr>
               </thead>
@@ -275,9 +263,6 @@ export default function AdminDashboard() {
                         : 'Ποτέ'
                       }
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {user.sms_credits.toFixed(2)}€
-                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -290,16 +275,12 @@ export default function AdminDashboard() {
           <h3 className="text-lg font-medium text-gray-900 mb-4">Σύνοψη Εσόδων</h3>
           <dl className="space-y-2">
             <div className="flex justify-between">
-              <dt className="text-sm text-gray-500">Ετήσιες Συνδρομές (2 × 14.99€):</dt>
-              <dd className="text-sm font-medium text-gray-900">29.98€</dd>
-            </div>
-            <div className="flex justify-between">
-              <dt className="text-sm text-gray-500">SMS Credits Πωλήσεις:</dt>
-              <dd className="text-sm font-medium text-gray-900">15.50€</dd>
+              <dt className="text-sm text-gray-500">Ετήσιες Συνδρομές ({stats?.activeSubscriptions || 0} × 14.99€):</dt>
+              <dd className="text-sm font-medium text-gray-900">{((stats?.activeSubscriptions || 0) * 14.99).toFixed(2)}€</dd>
             </div>
             <div className="flex justify-between border-t pt-2">
               <dt className="text-sm font-medium text-gray-900">Σύνολο Εσόδων:</dt>
-              <dd className="text-sm font-bold text-gray-900">45.48€</dd>
+              <dd className="text-sm font-bold text-gray-900">{((stats?.activeSubscriptions || 0) * 14.99).toFixed(2)}€</dd>
             </div>
           </dl>
         </div>
