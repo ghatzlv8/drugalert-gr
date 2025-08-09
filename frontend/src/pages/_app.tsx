@@ -40,20 +40,14 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <>
-      {/* Google tag (gtag.js) - Load first */}
-      <Script
-        src="https://www.googletagmanager.com/gtag/js?id=G-HTRYE07M9X"
-        strategy="afterInteractive"
-      />
-      
-      {/* Initialize dataLayer and gtag function */}
-      <Script id="google-analytics" strategy="afterInteractive">
+      {/* Initialize consent mode for GTM */}
+      <Script id="gtm-consent" strategy="beforeInteractive">
         {`
+          // Define dataLayer and gtag function for consent mode
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
           
-          // Set default consent mode for EU regions BEFORE configuration
+          // Set default consent mode for EU regions
           gtag('consent', 'default', {
             'ad_storage': 'denied',
             'ad_user_data': 'denied',
@@ -77,25 +71,10 @@ export default function App({ Component, pageProps }: AppProps) {
             'security_storage': 'granted'
           });
           
-          // Configure Google Analytics
-          gtag('config', 'G-HTRYE07M9X', {
-            'anonymize_ip': true,
-            'ads_data_redaction': true,
-            'allow_ad_personalization_signals': false,
-            'send_page_view': true,
-            'cookie_flags': 'SameSite=None;Secure'
+          // Push consent mode initialization event for GTM
+          window.dataLayer.push({
+            'event': 'consent_mode_ready'
           });
-          
-          // Set up Enhanced Conversions data redaction
-          gtag('set', 'ads_data_redaction', true);
-          
-          // If you have Google Ads, add the conversion tracking here
-          // Example: gtag('config', 'AW-XXXXXXXXX');
-          
-          // Notify Tag Assistant that the tag is ready
-          if (window.google_tag_assistant_api) {
-            window.google_tag_assistant_api.datalayer = window.dataLayer;
-          }
         `}
       </Script>
       
