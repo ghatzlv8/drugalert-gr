@@ -23,6 +23,7 @@ class EOFScraper:
             'farmaka': {
                 'name': 'Φάρμακα',
                 'url': '/category/farmaka/',
+                'type': 'farmaka',
                 'subcategories': {
                     'adeia-dynatotitas-paragogis-diakinisis-farmaka': 'Άδεια δυνατότητας παραγωγής/διακίνησης',
                     'anakliseis-farmakon-anthropinis-xrisis-farmaka': 'Ανακλήσεις φαρμάκων ανθρώπινης χρήσης',
@@ -33,6 +34,60 @@ class EOFScraper:
                     'parigoritiki-xrisi-farmaka': 'Παρηγορητική χρήση',
                     'farmakoepagripnisi-farmaka': 'Φαρμακοεπαγρύπνηση'
                 }
+            },
+            'ktiniatrika': {
+                'name': 'Κτηνιατρικά',
+                'url': '/category/ktiniatrika/',
+                'type': 'ktiniatrika',
+                'subcategories': {
+                    'anakliseis-ktiniatrika': 'Ανακλήσεις',
+                    'anakoinoseis-ktiniatrika': 'Ανακοινώσεις',
+                    'deltia-typou-ktiniatrika': 'Δελτία Τύπου',
+                    'farmakoepagripnisi-ktiniatrika': 'Φαρμακοεπαγρύπνηση'
+                }
+            },
+            'kallintika': {
+                'name': 'Καλλυντικά',
+                'url': '/category/kallintika/',
+                'type': 'kallintika',
+                'subcategories': {
+                    'anakliseis-kallintika': 'Ανακλήσεις'
+                }
+            },
+            'iatrotexnologika': {
+                'name': 'Ιατροτεχνολογικά',
+                'url': '/category/iatrotexnologika/',
+                'type': 'iatrotexnologika',
+                'subcategories': {
+                    'anakoinoseis-iatrotexnologika': 'Ανακοινώσεις',
+                    'anakliseis-iatrotexnologika': 'Ανακλήσεις',
+                    'deltia-typou-iatrotexnologika': 'Δελτία τύπου',
+                    'ylikoepagrypnisi': 'Υλικοεπαγρύπνηση'
+                }
+            },
+            'vioktona': {
+                'name': 'Βιοκτόνα',
+                'url': '/category/vioktona/',
+                'type': 'vioktona',
+                'subcategories': {
+                    'anakliseis-vioktona': 'Ανακλήσεις',
+                    'anakoinoseis-vioktona': 'Ανακοινώσεις'
+                }
+            },
+            'diatrofika-proionta': {
+                'name': 'Διατροφικά προϊόντα',
+                'url': '/category/diatrofika-proionta/',
+                'type': 'diatrofika',
+                'subcategories': {
+                    'anakliseis-diatrofika': 'Ανακλήσεις',
+                    'anakoinoseis-diatrofika': 'Ανακοινώσεις'
+                }
+            },
+            'farmakeftiki-kannavi': {
+                'name': 'Φαρμακευτική κάνναβη',
+                'url': '/farmaka-farmakeftiki-kanavi/',
+                'type': 'kannavi',
+                'subcategories': {}
             }
         }
     
@@ -202,7 +257,7 @@ class EOFScraper:
         
         return sorted(urls)
     
-    def scrape_category(self, category_slug, category_name, category_url, parent_category=None):
+    def scrape_category(self, category_slug, category_name, category_url, parent_category=None, category_type=None):
         """Scrape all posts from a category"""
         from database.models import Category, Post, Attachment
         session = self.db_manager.get_session()
@@ -217,7 +272,8 @@ class EOFScraper:
                     name=category_name,
                     slug=category_slug,
                     url=full_url,
-                    parent_id=parent_category.id if parent_category else None
+                    parent_id=parent_category.id if parent_category else None,
+                    category_type=category_type
                 )
                 session.add(category)
                 session.commit()
@@ -366,7 +422,8 @@ class EOFScraper:
                     scraped, new, updated = self.scrape_category(
                         cat_slug, 
                         cat_info['name'], 
-                        cat_info['url']
+                        cat_info['url'],
+                        category_type=cat_info.get('type')
                     )
                     total_scraped += scraped
                     total_new += new
@@ -375,13 +432,21 @@ class EOFScraper:
                     # Scrape subcategories
                     parent_cat = session.query(Category).filter_by(slug=cat_slug).first()
                     for subcat_slug, subcat_name in cat_info.get('subcategories', {}).items():
-                        subcat_url = f"/category/farmaka/{subcat_slug}/"
+                        # Build correct subcategory URL based on parent category
+                        if cat_slug == 'farmaka':
+                            subcat_url = f"/category/farmaka/{subcat_slug}/"
+                        else:
+                            # For other categories, subcategories might be under the main category
+                            # We'll need to check the actual structure on the website
+                            subcat_url = f"/category/{cat_slug}/{subcat_slug}/"
+                        
                         try:
                             scraped, new, updated = self.scrape_category(
                                 subcat_slug,
                                 subcat_name,
                                 subcat_url,
-                                parent_cat
+                                parent_cat,
+                                category_type=cat_info.get('type')
                             )
                             total_scraped += scraped
                             total_new += new

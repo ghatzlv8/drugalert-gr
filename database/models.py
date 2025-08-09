@@ -14,6 +14,7 @@ class Category(Base):
     slug = Column(String(255), unique=True, nullable=False)
     url = Column(String(500), nullable=False)
     parent_id = Column(Integer, ForeignKey('categories.id'), nullable=True)
+    category_type = Column(String(50), nullable=True)  # farmaka, ktiniatrika, kallintika, etc.
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     

@@ -41,6 +41,7 @@ class CategoryResponse(BaseModel):
     slug: str
     url: str
     parent_id: Optional[int]
+    category_type: Optional[str]
     post_count: Optional[int] = 0
     
     class Config:
@@ -108,7 +109,8 @@ def get_categories(
                 "name": cat.name,
                 "slug": cat.slug,
                 "url": cat.url,
-                "parent_id": cat.parent_id
+                "parent_id": cat.parent_id,
+                "category_type": cat.category_type
             }
             
             if include_counts:
