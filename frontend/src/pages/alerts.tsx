@@ -10,6 +10,7 @@ const formatDate = (dateString: string) => {
 };
 import Link from 'next/link';
 import Logo from '../components/Logo';
+import Layout from '../components/Layout';
 
 interface Category {
   id: number;
@@ -231,36 +232,8 @@ export default function Alerts() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center space-x-8">
-              <Logo showText={true} />
-              <div className="hidden md:flex space-x-4">
-                <Link href="/dashboard" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
-                  Αρχική
-                </Link>
-                <Link href="/alerts" className="text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
-                  Ανακοινώσεις
-                </Link>
-                <Link href="/settings" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
-                  Ρυθμίσεις
-                </Link>
-                <Link href="/subscription" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
-                  Συνδρομή
-                </Link>
-              </div>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-            >
-              Αποσύνδεση
-            </button>
-          </div>
-        </div>
-      </nav>
+    <Layout>
+      <div className="min-h-screen bg-gray-50 pt-16">
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
@@ -403,10 +376,10 @@ export default function Alerts() {
             )}
           </>
         )}
-      </main>
+        </main>
 
-      {/* Share Modal */}
-      {showShareModal && (
+        {/* Share Modal */}
+        {showShareModal && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" onClick={() => setShowShareModal(false)}>
           <div className="relative top-20 mx-auto p-6 border w-full max-w-md shadow-lg rounded-md bg-white" onClick={(e) => e.stopPropagation()}>
             <div className="text-center">
@@ -469,7 +442,8 @@ export default function Alerts() {
             </div>
           </div>
         </div>
-      )}
-    </div>
+        )}
+      </div>
+    </Layout>
   );
 }
