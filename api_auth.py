@@ -42,20 +42,20 @@ class UserResponse(BaseModel):
     full_name: Optional[str]
     subscription_status: str
     trial_end_date: datetime
-    trial_days_remaining: Optional[int]
+    trial_days_remaining: Optional[int] = None
     subscription_end_date: Optional[datetime]
     email_notifications: bool
     push_notifications: bool
     sms_notifications: bool
     sms_credits: float
     # Billing info
-    company_name: Optional[str]
-    tax_id: Optional[str]
-    tax_office: Optional[str]
-    billing_address: Optional[str]
-    billing_city: Optional[str]
-    billing_postal_code: Optional[str]
-    invoice_type: Optional[str]
+    company_name: Optional[str] = None
+    tax_id: Optional[str] = None
+    tax_office: Optional[str] = None
+    billing_address: Optional[str] = None
+    billing_city: Optional[str] = None
+    billing_postal_code: Optional[str] = None
+    invoice_type: Optional[str] = None
     
     class Config:
         from_attributes = True
