@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime, Boolean, ForeignKey, Index
+from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime, Boolean, ForeignKey, Index, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 from datetime import datetime
@@ -99,7 +99,29 @@ class DatabaseManager:
                 # Default to SQLite for development
                 database_url = f"sqlite:///{os.path.join(os.path.dirname(__file__), 'eof_scraper.db')}"
         
-        self.engine = create_engine(database_url, echo=False)
+        # Configure engine with SQLite-specific settings for better concurrency
+        if database_url.startswith('sqlite'):
+            # Add timeout and enable WAL mode for better concurrent access
+            connect_args = {
+                'timeout': 30,  # 30 seconds timeout
+                'check_same_thread': False
+            }
+            self.engine = create_engine(
+                database_url, 
+                echo=False,
+                connect_args=connect_args,
+                pool_pre_ping=True,
+                pool_size=10,
+                max_overflow=20
+            )
+            # Enable WAL mode for better concurrency
+            with self.engine.connect() as conn:
+                conn.execute(text("PRAGMA journal_mode=WAL"))
+                conn.execute(text("PRAGMA busy_timeout=30000"))  # 30 seconds
+                conn.commit()
+        else:
+            self.engine = create_engine(database_url, echo=False)
+        
         Base.metadata.create_all(self.engine)
         self.Session = sessionmaker(bind=self.engine)
     
