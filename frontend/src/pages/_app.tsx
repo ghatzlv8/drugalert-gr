@@ -40,14 +40,20 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <>
-      {/* Define dataLayer and gtag function before loading Google tag */}
-      <Script id="gtag-init" strategy="beforeInteractive">
+      {/* Google tag (gtag.js) - Load first */}
+      <Script
+        src="https://www.googletagmanager.com/gtag/js?id=G-HTRYE07M9X"
+        strategy="afterInteractive"
+      />
+      
+      {/* Initialize dataLayer and gtag function */}
+      <Script id="google-analytics" strategy="afterInteractive">
         {`
-          // Define dataLayer and the gtag function.
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
           
-          // Set default consent to 'denied' for EU regions
+          // Set default consent mode for EU regions BEFORE configuration
           gtag('consent', 'default', {
             'ad_storage': 'denied',
             'ad_user_data': 'denied',
@@ -70,27 +76,14 @@ export default function App({ Component, pageProps }: AppProps) {
             'personalization_storage': 'granted',
             'security_storage': 'granted'
           });
-        `}
-      </Script>
-      
-      {/* Google tag (gtag.js) */}
-      <Script
-        src="https://www.googletagmanager.com/gtag/js?id=G-HTRYE07M9X"
-        strategy="afterInteractive"
-      />
-      
-      <Script id="google-analytics-config" strategy="afterInteractive">
-        {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
           
-          // Configure Google Analytics with enhanced privacy features
+          // Configure Google Analytics
           gtag('config', 'G-HTRYE07M9X', {
             'anonymize_ip': true,
             'ads_data_redaction': true,
             'allow_ad_personalization_signals': false,
-            'send_page_view': true
+            'send_page_view': true,
+            'cookie_flags': 'SameSite=None;Secure'
           });
           
           // Set up Enhanced Conversions data redaction
@@ -98,6 +91,11 @@ export default function App({ Component, pageProps }: AppProps) {
           
           // If you have Google Ads, add the conversion tracking here
           // Example: gtag('config', 'AW-XXXXXXXXX');
+          
+          // Notify Tag Assistant that the tag is ready
+          if (window.google_tag_assistant_api) {
+            window.google_tag_assistant_api.datalayer = window.dataLayer;
+          }
         `}
       </Script>
       

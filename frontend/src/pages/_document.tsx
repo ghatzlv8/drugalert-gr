@@ -9,15 +9,17 @@ export default function Document() {
         <meta name="description" content="Μείνετε ενημερωμένοι για ανακλήσεις φαρμάκων και ενημερώσεις από τον ΕΟΦ" />
         <link rel="icon" href="/favicon.ico" />
         
-        {/* Google Analytics */}
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-HTRYE07M9X"></script>
+        {/* Preconnect to Google domains for faster loading */}
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <link rel="preconnect" href="https://www.google-analytics.com" />
+        
+        {/* Initialize dataLayer for Tag Assistant compatibility */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
+              // Initialize dataLayer early for Tag Assistant
               window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', 'G-HTRYE07M9X');
+              window.google_tag_assistant_api = window.google_tag_assistant_api || {};
             `,
           }}
         />
